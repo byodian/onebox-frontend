@@ -3,7 +3,7 @@ import { TogglePassword, PasswordInput,
   ButtonWrap,
   EyeHidedButton,
   EyeOpenedButton
-} from './PasswordStyles';
+} from './InputPasswordStyles';
 
 
 const Password = ({ password }) => {

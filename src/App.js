@@ -3,9 +3,9 @@ import { useResource, useMessage, useVisibility } from './hooks';
 import noteService from './api/note';
 import loginService from './api/login';
 import userService from './api/user';
-import NoteForm from './components/NoteForm';
+import TextEditor from './components/TextEditor';
 import Overlay from './components/Overlay';
-import DefaultPage from './components/DefaultPage';
+import DefaultComponent from './components/DefaultEl';
 import { ReactComponent as DefaultHomeSvg } from './assets/svg/defaultHome.svg';
 import { ReactComponent as DefaultTagsSvg } from './assets/svg/defaultTags.svg';
 import Login from './page/Login';
@@ -215,10 +215,10 @@ const App = () => {
         <Notes {...notesProps}>
           {
             notes.length > 0
-              ? <NoteForm createNote={addNote} />
+              ? <TextEditor createNote={addNote} />
               : <div>
-                <NoteForm createNote={addNote} />
-                <DefaultPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
+                <TextEditor createNote={addNote} />
+                <DefaultComponent icon={<DefaultHomeSvg />} text="写点什么吧？" />
               </div>
           }
         </Notes>
@@ -255,7 +255,7 @@ const App = () => {
         />
         {notes.length > 0
           ? null
-          : <DefaultPage icon={<DefaultTagsSvg />} text="还没有标签" />
+          : <DefaultComponent icon={<DefaultTagsSvg />} text="还没有标签" />
         }
       </NotesContainer>
     </Container>

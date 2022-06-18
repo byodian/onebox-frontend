@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Label } from '../components/InputStyles';
 import { useField } from '../hooks';
 import { ExtendedButton } from './LoginPageStyles';
-import Password from '../components/PasswordInput';
+import InputPassword from '../components/InputPassword';
 
 const Register = ({ handleRegister }) => {
   const email = useField('email');
@@ -40,7 +40,7 @@ const Register = ({ handleRegister }) => {
       </div>
       <div className="md-margin-bottom">
         <Label htmlFor="password">密码</Label>
-        <Password password={password}></Password>
+        <InputPassword password={password} />
       </div>
       <div>
         <ExtendedButton id="login-button" type="submit">注册</ExtendedButton>

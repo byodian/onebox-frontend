@@ -1,6 +1,6 @@
 import React from 'react';
 import { ModalWrap, ModalContent, IconWrap, ModalCloseIcon, Overlay } from './ModalStyles';
-import NoteForm from './NoteForm';
+import TextEditor from './TextEditor';
 import Alert from './AlertStyles';
 
 const Modal = ({ createNote, message, severity, show, handleShow }) => {
@@ -12,7 +12,7 @@ const Modal = ({ createNote, message, severity, show, handleShow }) => {
       </IconWrap>
       <ModalContent>
         <Alert severity={severity} message={message}>{message}</Alert>
-        <NoteForm createNote={createNote}/>
+        <TextEditor createNote={createNote}/>
       </ModalContent>
     </ModalWrap>
   );

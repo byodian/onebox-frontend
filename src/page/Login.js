@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Label } from '../components/InputStyles';
 import { useField } from '../hooks';
 import { ExtendedButton } from './LoginPageStyles';
-import Password from '../components/PasswordInput';
+import Password from '../components/InputPassword';
 
 const Login = ({ handleLogin }) => {
   const email = useField('email');

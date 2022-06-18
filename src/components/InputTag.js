@@ -1,5 +1,5 @@
 import React from 'react';
-import { TagsInputWrap, TagsInput, TagsButton } from './TagInputStyles';
+import { TagsInputWrap, TagsInput, TagsButton } from './InputTagStyles';
 
 const TagsField = ({ tagsState, handleTagsSubmit }) => {
   return (

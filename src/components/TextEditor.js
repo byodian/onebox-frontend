@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { EditorContainer, SubmitButton } from './TextEditorStyles';
 
-const TextEditor = ({ text, setText, handleSubmit }) => {
+const TextEditor = ({ createNote }) => {
+
+  const [text, setText] = useState('');
+
+  const addNote = (event) => {
+    event.preventDefault();
+    createNote({
+      content: text,
+      like: false
+    });
+    setText('');
+  };
+
   return (
     <EditorContainer>
       <CKEditor
@@ -13,7 +25,7 @@ const TextEditor = ({ text, setText, handleSubmit }) => {
           setText(editor.getData());
         }}
       />
-      <SubmitButton type="submit" onClick={handleSubmit}>保存</SubmitButton>
+      <SubmitButton type="submit" onClick={addNote}>保存</SubmitButton>
     </EditorContainer>
   );
 };

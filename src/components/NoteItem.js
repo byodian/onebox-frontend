@@ -2,7 +2,7 @@ import React from 'react';
 import { useVisibility, useField } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
-import TagsField from './TagInput';
+import InputTag from './InputTag';
 import {
   NoteItem,
   NoteContentWrap,
@@ -13,7 +13,7 @@ import {
   IconGroup,
   TagsWrap,
   Tag
-} from './NoteStyles';
+} from './NoteItemStyles';
 
 import {
   FavoriteBorderIcon,
@@ -66,7 +66,7 @@ const Note = ({ note, getLocalDate, toggleLike, deleteNote, updateTagsOf }) => {
           </IconGroup>
         </NoteGroup>
         {tagsVisibility.visibility
-          ? <TagsField tagsState={tagsState} handleTagsSubmit={handleSubmit} note={note}/>
+          ? <InputTag tagsState={tagsState} handleTagsSubmit={handleSubmit} note={note}/>
           : null
         }
       </NoteContentWrap>

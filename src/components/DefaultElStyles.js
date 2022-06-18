@@ -1,6 +1,6 @@
 import Styled from 'styled-components';
 
-export const DefaultPageWrap = Styled.div`
+export const DefaultComponentWrap = Styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;

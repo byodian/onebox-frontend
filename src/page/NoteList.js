@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import Note from '../components/Note';
+import NoteItem from '../components/NoteItem';
 import noteService from '../api/note';
 import Alert from '../components/AlertStyles';
-import { NoteItems } from './NoteListStyles';
 
 const Notes = ({
   notes,
@@ -31,9 +30,9 @@ const Notes = ({
     <>
       <Alert severity={severity} message={message}>{message}</Alert>
       {children}
-      <NoteItems>
+      <ul>
         {notes.map(note =>
-          <Note
+          <NoteItem
             key={note.id}
             note={note}
             getLocalDate={getLocalDate}
@@ -42,7 +41,7 @@ const Notes = ({
             updateTagsOf={updateTagsOf}
           />
         )}
-      </NoteItems>
+      </ul>
     </>
   );
 };

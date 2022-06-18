@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '../components/HeaderNotes';
 import Sidebar from '../components/Siderbar';
 import Modal from '../components/Modal';
-import FloatButton from '../components/FloatButton';
+import FloatButton from '../components/ButtonFloat';
 import { Main, Content, ContentWrap } from './NotesContainerStyles';
 
 const NotesContainer = (props) => {
