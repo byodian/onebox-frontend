@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/ButtonStyles';
 
 export const Heading = styled.h1`
   text-align: center;
@@ -46,10 +45,4 @@ export const FormContainer = styled.div`
     border: 1px solid var(--main-color);
     border-radius: var(--radius-md);
   }
-`;
-
-export const ExtendedButton = styled(Button)`
-  display: block;
-  width: 100%;
-  border-radius: var(--radius-md);
 `;

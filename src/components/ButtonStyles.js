@@ -24,6 +24,18 @@ export const Button = styled.button`
   `}
 `;
 
+export const TextButton = styled(Button)`
+  padding: 0;
+  min-width: auto;
+  background: none;
+  color: var(--color-red-06);
+  font-size: inherit;
+
+  &:hover {
+    background: none;
+  }
+`;
+
 export const HamburgerButton = styled.button`
   display: flex;
   border-radius: var(--radius-sm);
@@ -45,6 +57,12 @@ export const MenuButton = styled.button`
   &:hover {
     background-color: var(--color-grey-02);
   }
+`;
+
+export const LoginButton = styled(Button)`
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-md);
 `;
 
 export const MenuText = styled.span`

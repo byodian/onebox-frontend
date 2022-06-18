@@ -1,14 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import Header from '../components/HeaderHome';
 import Footer from '../components/Footer';
 import { Button } from '../components/ButtonStyles';
-import { Link } from 'react-router-dom';
+
 import Hero from '../assets/svg/hero.svg';
 import Placeholder from '../assets/svg/placeholder.png';
 import Feature1 from '../assets/svg/feature_1.svg';
 import Feature2 from '../assets/svg/feature_2.svg';
 import Feature3 from '../assets/svg/feature_3.svg';
 import FooterImgage from '../assets/svg/footer_1.svg';
+
 import {
   Container,
   HeroWrapper,

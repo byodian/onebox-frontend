@@ -1,17 +1,19 @@
 import React from 'react';
-import { Input, Label } from '../components/InputStyles';
+import { Input, Label } from './InputStyles';
 import { useField } from '../hooks';
-import { ExtendedButton } from './LoginPageStyles';
-import Password from '../components/InputPassword';
+import { LoginButton } from './ButtonStyles';
+import Password from './InputPassword';
 
-const Login = ({ handleLogin }) => {
+const AccountRegisterForm = ({ handleFormSubmit }) => {
   const email = useField('email');
+  const username = useField('text');
   const password = useField('password');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    handleLogin({
+    handleFormSubmit({
       email: email.value,
+      username: username.value,
       password: password.value
     });
   };
@@ -29,15 +31,24 @@ const Login = ({ handleLogin }) => {
           />
         </div>
         <div className="md-margin-bottom">
+          <Label htmlFor="username">用户名</Label>
+          <Input
+            {...username}
+            id="username"
+            required
+            reset="username"
+          />
+        </div>
+        <div className="md-margin-bottom">
           <Label htmlFor="password">密码</Label>
           <Password password={password}></Password>
         </div>
         <div>
-          <ExtendedButton id="login-button" type="submit">登录</ExtendedButton>
+          <LoginButton id="login-button" type="submit">注册</LoginButton>
         </div>
       </form>
     </>
   );
 };
 
-export default Login;
+export default AccountRegisterForm;

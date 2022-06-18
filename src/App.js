@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useResource, useMessage, useVisibility } from './hooks';
 import noteService from './api/note';
-import loginService from './api/login';
-import userService from './api/user';
 import TextEditor from './components/TextEditor';
 import Overlay from './components/Overlay';
 import DefaultComponent from './components/DefaultEl';
 import { ReactComponent as DefaultHomeSvg } from './assets/svg/defaultHome.svg';
 import { ReactComponent as DefaultTagsSvg } from './assets/svg/defaultTags.svg';
-import Login from './page/Login';
-import Register from './page/Register';
-import Form from './page/LoginPage';
+import AuthPage from './page/AuthPage';
 import Home from './page/HomePage';
 import Notes from './page/NoteList';
 import Details from './page/NoteDetail';
@@ -129,56 +125,12 @@ const App = () => {
     }
   };
 
-  const login = async (userObject) => {
-    try {
-      const user = await loginService.login(userObject);
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
-      noteService.setToken(user.token);
-      handleMessage('登录成功', 'success');
-      removeMessage(2000);
-      navigate('/notes');
-    } catch (exception) {
-      handleMessage('用户名或密码不正确', 'error');
-      removeMessage(5000);
-    }
-  };
-
-  // eslint-disable-next-line
-  const register = async (newUser) => {
-    try {
-      const user = await userService.create(newUser);
-      handleMessage(`用户 ${user.username} 注册成功，请登录！`, 'success');
-      removeMessage(2000);
-      navigate('/login');
-    } catch(error) {
-      handleMessage('您输入的邮箱地址或用户名已被使用', 'error');
-      console.dir(error);
-      removeMessage(5000);
-    }
-  };
-
   const handleLogout = () => {
     window.localStorage.removeItem('loggedNoteappUser');
     setUser(null);
     handleTags([]);
     navigate('/');
   };
-
-  const RequiredAuth = ({ children }) => {
-    return user ? children : <Navigate to="/login" />;
-  };
-
-  const loginPage = () => (
-    <Form heading="登录" message={message} severity={severity} >
-      <Login handleLogin={login} />
-    </Form>
-  );
-
-  const registerPage = () => (
-    <Form message={message} heading="注册" severity={severity}>
-      <Register handleRegister={register}/>
-    </Form>
-  );
 
   const notesProps = {
     notes,
@@ -278,8 +230,12 @@ const App = () => {
       {/* <Route path="/notes"> */}
       {/*   { user ? showNotesPage(notesProps) : <Navigate to="/login" /> } */}
       {/* </Route> */}
-      <Route path="/login" element={loginPage()} />
-      <Route path="/register" element={registerPage()} />
+      <Route path="/login" element={
+        <AuthPage  isLogginActive={true} />
+      } />
+      <Route path="/register" element={
+        <AuthPage  isLogginActive={false} />
+      } />
       <Route path="/" element={<Home />} />
     </Routes>
   );
