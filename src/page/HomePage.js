@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import Header from '../components/HeaderHome';
+import Header from '../components/HomeHeader';
 import Footer from '../components/Footer';
 import { Button } from '../components/ButtonStyles';
 

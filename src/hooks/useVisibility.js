@@ -11,11 +11,7 @@ const useVisibility = (bool) => {
     setVisibility(false);
   };
 
-  return {
-    visibility,
-    handleVisibility,
-    setHidden
-  };
+  return [visibility, { handleVisibility, setHidden }];
 };
 
 export default useVisibility;

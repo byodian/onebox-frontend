@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Icon } from './IconStyles';
 
 export const SidebarContainer = styled.nav`
+  display: none;
   --width: 18.0rem;
   position: absolute;
   left: 0;
@@ -10,8 +11,6 @@ export const SidebarContainer = styled.nav`
   width: var(--width);
   height: 100%;
   background-color: #fff;
-  opacity: ${props => props.isOpen ? '1' : '0'};
-  transform: translateX(${props => props.isOpen ? 0 : '-18rem'});
   transition: all .3s ease-in-out;
   z-index: 400;
 

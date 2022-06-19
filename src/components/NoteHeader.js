@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MenuButton, MenuText, HamburgerButton  } from './ButtonStyles';
 import {
   Header,
@@ -6,9 +6,10 @@ import {
   Img,
   ImgButton,
   MenuContainer
-} from './HeaderNotesStyles';
+} from './NoteHeaderStyles';
 import { Hamburger } from './IconStyles';
 import Author from '../assets/author.png';
+import { useVisibility } from '../hooks';
 
 const DropDown = ({ handleLogout }) => {
   return (
@@ -25,20 +26,20 @@ const DropDown = ({ handleLogout }) => {
   );
 };
 
-const NotesHeader = ({ handleLogout, handleClick }) => {
-  const [show, setShow] = useState(false);
+const NotesHeader = ({ handleLogout }) => {
+  const [visibility, { handleVisibility }] = useVisibility(false);
 
   return (
     <>
       <Header>
-        <HamburgerButton  onClick={handleClick}>
+        <HamburgerButton>
           <Hamburger></Hamburger>
         </HamburgerButton>
         <Nav>
-          <ImgButton onClick={() => setShow(!show)}>
+          <ImgButton onClick={handleVisibility}>
             <Img src={Author} alt="用户头像"/>
           </ImgButton>
-          { show ? <DropDown handleLogout={handleLogout} /> : null }
+          { visibility ? <DropDown handleLogout={handleLogout} /> : null }
         </Nav>
       </Header>
     </>

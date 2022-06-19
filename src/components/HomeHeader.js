@@ -1,6 +1,6 @@
 import React from 'react';
 import Logo from './Logo';
-import { Header, Nav, NavItems, NavLink, NavItem, NavRegisterLink } from './HeaderHomeStyles';
+import { Header, Nav, NavItems, NavLink, NavItem, NavRegisterLink } from './HomeHeaderStyles';
 
 const HomeHeader = () => {
   return (

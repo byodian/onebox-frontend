@@ -27,13 +27,12 @@ const SidebarItemWrap = (props) => {
   );
 };
 
-const Siderbar = ({ isOpen, handleOpen }) => {
-
+const Siderbar = () => {
   return (
-    <SidebarContainer isOpen={isOpen}>
+    <SidebarContainer>
       <SidebarHamburgerIcon>
-        <HamburgerButton  onClick={handleOpen}>
-          <Hamburger></Hamburger>
+        <HamburgerButton>
+          <Hamburger />
         </HamburgerButton>
       </SidebarHamburgerIcon>
       <SidebarWrap>

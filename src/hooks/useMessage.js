@@ -15,7 +15,7 @@ const useMessage = () => {
     }, timer);
   };
 
-  return [message, { handleMessage, removeMessage, severity }];
+  return [{ message, severity }, { handleMessage, removeMessage }];
 };
 
 export default useMessage;

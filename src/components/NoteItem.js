@@ -3,6 +3,8 @@ import { useVisibility, useField } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
 import InputTag from './InputTag';
+import { getLocalDate } from '../utils';
+
 import {
   NoteItem,
   NoteContentWrap,
@@ -22,8 +24,8 @@ import {
   TagIcon,
 } from './IconStyles';
 
-const Note = ({ note, getLocalDate, toggleLike, deleteNote, updateTagsOf }) => {
-  const tagsVisibility = useVisibility(false);
+const Note = ({ note, toggleLike, deleteNote, updateTag }) => {
+  const [visibility, { handleVisibility }] = useVisibility(false);
   const tagsState = useField('text', note.tags.join(','));
   const navigate = useNavigate();
 
@@ -31,9 +33,9 @@ const Note = ({ note, getLocalDate, toggleLike, deleteNote, updateTagsOf }) => {
     navigate(`/notes/${note.id}`);
   };
 
-  const handleSubmit = () => {
-    updateTagsOf(note.id, tagsState.value);
-    tagsVisibility.handleVisibility();
+  const handleTagUpdate = () => {
+    updateTag(note.id, tagsState.value);
+    handleVisibility();
   };
 
   return (
@@ -61,12 +63,12 @@ const Note = ({ note, getLocalDate, toggleLike, deleteNote, updateTagsOf }) => {
               <DeleteIcon onClick={deleteNote}></DeleteIcon>
             </IconWrap>
             <IconWrap>
-              <TagIcon onClick={tagsVisibility.handleVisibility}></TagIcon>
+              <TagIcon onClick={handleVisibility}></TagIcon>
             </IconWrap>
           </IconGroup>
         </NoteGroup>
-        {tagsVisibility.visibility
-          ? <InputTag tagsState={tagsState} handleTagsSubmit={handleSubmit} note={note}/>
+        {visibility
+          ? <InputTag tagsState={tagsState} handleTagsSubmit={handleTagUpdate} note={note}/>
           : null
         }
       </NoteContentWrap>

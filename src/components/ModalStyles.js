@@ -42,7 +42,7 @@ export const ModalCloseIcon = styled(CloseIcon)`
 `;
 
 export const ModalContent= styled.div`
-  // 子元素层叠上下文顺序比 overlay 组件高
+  /* 子元素层叠上下文顺序比 overlay 组件高 */
   position: relative;
   padding: var(--space-16);
   margin-top: var(--space-48);

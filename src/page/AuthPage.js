@@ -22,7 +22,7 @@ import noteService from '../api/note';
 import { useMessage } from '../hooks';
 
 const AuthPage = ({ isLogginActive }) => {
-  const [message, { handleMessage, removeMessage, severity }] = useMessage();
+  const [{ message, severity }, { handleMessage, removeMessage }] = useMessage();
   const navigate = useNavigate();
   const headingText = isLogginActive ? '登录' : '注册';
 
@@ -34,8 +34,9 @@ const AuthPage = ({ isLogginActive }) => {
       handleMessage('登录成功', 'success');
       removeMessage(2000);
       navigate('/notes');
-    } catch (exception) {
-      handleMessage('用户名或密码不正确', 'error');
+    } catch (error) {
+      // handleMessage('用户名或密码不正确', 'error');
+      handleMessage(error.message, 'error');
       removeMessage(5000);
     }
   };
@@ -47,7 +48,8 @@ const AuthPage = ({ isLogginActive }) => {
       removeMessage(2000);
       navigate('/login');
     } catch(error) {
-      handleMessage('您输入的邮箱地址或用户名已被使用', 'error');
+      // handleMessage('您输入的邮箱地址或用户名已被使用', 'error');
+      handleMessage(error.message, 'error');
       console.dir(error);
       removeMessage(5000);
     }
