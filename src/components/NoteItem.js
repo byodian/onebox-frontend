@@ -6,16 +6,6 @@ import InputTag from './InputTag';
 import { getLocalDate } from '../utils';
 
 import {
-  NoteItem,
-  NoteContentWrap,
-  NoteTime,
-  NoteContent,
-  NoteGroup,
-  IconGroup,
-  Tag
-} from './NoteItemStyles';
-
-import {
   FavoriteBorderIcon,
   FavoriteIcon,
   DeleteIcon,
@@ -33,44 +23,48 @@ const Note = ({ note, toggleLike, deleteNote, updateTag }) => {
 
   const handleTagUpdate = () => {
     updateTag(note.id, tagsState.value);
-    setVisibility();
+    setVisibility(!visibility);
   };
 
   return (
-    <NoteItem>
-      <NoteContentWrap onClick={handleClick}>
-        <NoteTime>{getLocalDate(note.date)}</NoteTime>
-        <NoteContent>{parse(note.content)}</NoteContent>
-        <NoteGroup onClick={(event) => event.stopPropagation()}>
-          <div>
-            {note.tags.map((tag, index) => (
-              <Tag key={index}>
-                {tag}
-              </Tag>
-            ))}
+    <li
+      onClick={handleClick}
+      className="flex flex-col gap-y-4 py-6 px-8 cursor-pointer border-b border-b-gray-100 hover:bg-gray-50"
+    >
+      <time className="block text-2xl text-gray-400">{getLocalDate(note.date)}</time>
+      <div className="prose prose-2xl">{parse(note.content)}</div>
+      <div className="flex select-none cursor-auto" onClick={(event) => event.stopPropagation()}>
+        <div className="flex text-xl gap-x-6 items-center">
+          {note.tags.map((tag, index) => (
+            <button
+              key={index}
+              className="py-[1.5px] px-2 rounded-sm bg-[color:var(--highlight-1)] hover:text-[color:var(--highlight)]"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+        <div className="flex ml-auto items-center gap-x-6">
+          <div className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]">
+            {note.like ? (
+              <FavoriteIcon onClick={toggleLike}></FavoriteIcon>
+            ) : (
+              <FavoriteBorderIcon onClick={toggleLike}></FavoriteBorderIcon>
+            )}
           </div>
-          <IconGroup>
-            <div>
-              {note.like ? (
-                <FavoriteIcon onClick={toggleLike}></FavoriteIcon>
-              ) : (
-                <FavoriteBorderIcon onClick={toggleLike}></FavoriteBorderIcon>
-              )}
-            </div>
-            <div>
-              <DeleteIcon onClick={deleteNote}></DeleteIcon>
-            </div>
-            <div>
-              <TagIcon onClick={setVisibility}></TagIcon>
-            </div>
-          </IconGroup>
-        </NoteGroup>
-        {visibility
-          ? <InputTag tagsState={tagsState} handleTagsSubmit={handleTagUpdate} note={note}/>
-          : null
-        }
-      </NoteContentWrap>
-    </NoteItem>
+          <div className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]">
+            <DeleteIcon onClick={deleteNote}></DeleteIcon>
+          </div>
+          <div className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]">
+            <TagIcon onClick={() => setVisibility(!visibility)}></TagIcon>
+          </div>
+        </div>
+      </div>
+      {visibility
+        ? <InputTag tagsState={tagsState} handleTagsSubmit={handleTagUpdate} note={note}/>
+        : null
+      }
+    </li>
   );
 };
 

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Icon, CloseIcon } from './IconStyles';
 
 export const ModalWrap = styled.div`
   position: fixed;
@@ -23,29 +22,13 @@ export const Overlay = styled.div`
   background-color: var(--color-back-08);
 `;
 
-export const IconWrap = styled(Icon)`
-  position: absolute;
-  right: var(--space-4);
-  justify-content: center;
-  width: var(--space-48);
-  height: var(--space-48);
-  padding: 0;
-  margin-bottom: 0;
-
-  @media screen and (min-width: 540px) {
-    right: 20%;
-  }
-`;
-
-export const ModalCloseIcon = styled(CloseIcon)`
-  fill: #fff;
-`;
-
 export const ModalContent= styled.div`
   /* 子元素层叠上下文顺序比 overlay 组件高 */
+  height: 200px;
+  background-color: white;
   position: relative;
   padding: var(--space-16);
-  margin-top: var(--space-48);
+  margin-top: var(--space-96);
 
   @media screen and (min-width: 540px) {
     width: 55%;

@@ -1,7 +1,30 @@
 import React, { useState } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { EditorContainer, SubmitButton } from './TextEditorStyles';
+import Editor from 'ckeditor5-custom-build/build/ckeditor';
+
+const editorConfig = {
+  toolbar: {
+    items: [
+      'bold',
+      'italic',
+      'underline',
+      'link',
+      'bulletedList',
+      'numberedList',
+      'highlight',
+      '|',
+      'outdent',
+      'indent',
+      '|',
+      'code',
+      'codeBlock',
+      'removeFormat',
+      'undo',
+      'redo'
+
+    ]
+  }
+};
 
 const TextEditor = ({ createNote }) => {
 
@@ -17,16 +40,25 @@ const TextEditor = ({ createNote }) => {
   };
 
   return (
-    <EditorContainer>
+    <div className="py-6 border-b">
       <CKEditor
-        editor={ClassicEditor}
+        editor={Editor}
+        config = { editorConfig }
         data={text}
         onChange={(event, editor) => {
           setText(editor.getData());
         }}
       />
-      <SubmitButton type="submit" onClick={addNote}>保存</SubmitButton>
-    </EditorContainer>
+      <div className="text-right mt-6">
+        <button
+          className="bg-[#333] text-white px-4 py-1 rounded-md text-[1.4rem]"
+          type="submit"
+          onClick={addNote}
+        >
+          保存
+        </button>
+      </div>
+    </div>
   );
 };
 
