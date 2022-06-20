@@ -68,3 +68,82 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## React rich text editor component - Customizing the Builds
+
+### Creating custom builds with [online builder](https://ckeditor.com/ckeditor-5/online-builder/)
+
+1. Choosing the editor type
+2. Choosing plugins
+3. Toolbar composition
+4. Choosing the default language
+5. Download the customized build
+
+### Integating a build from the online builder
+
+1. Download the customized build
+2. Setting up folders
+```
+├── ckeditor5
+│   ├── build
+│   ├── sample
+│   ├── src
+│   ├── ...
+│   ├── package.json
+│   └── webpack.config.js
+├── node_modules
+├── public
+├── src
+├── ...
+└── package.json
+```
+3. Add the package located in the ckeditor5 directory as a dependency of your project
+```bash
+npm install ./ckeditor5
+```
+
+4. Import the build in your application
+```js
+import React, { Component } from 'react';
+import Editor from 'ckeditor5-custom-build/build/ckeditor';
+import { CKEditor } from '@ckeditor/ckeditor5-react'
+
+const editorConfiguration = {
+    toolbar: [ 'bold', 'italic' ]
+};
+
+class App extends Component {
+  render() {
+    return (
+    <div className="App">
+      <h2>Using CKEditor 5 from online builder in React</h2>
+      <CKEditor
+          editor={ Editor }
+          config={ editorConfiguration }
+          data="<p>Hello from CKEditor 5!</p>"
+          onReady={ editor => {
+              // You can store the "editor" and use when it is needed.
+              console.log( 'Editor is ready to use!', editor );
+          } }
+          onChange={ ( event, editor ) => {
+              const data = editor.getData();
+              console.log( { event, editor, data } );
+          } }
+          onBlur={ ( event, editor ) => {
+              console.log( 'Blur.', editor );
+          } }
+          onFocus={ ( event, editor ) => {
+              console.log( 'Focus.', editor );
+          } }
+      />
+    </div>
+    );
+  }
+}
+
+export default App;
+```
+
+### References
+- [Creating custom builds with online builder](https://ckeditor.com/docs/ckeditor5/latest/installation/getting-started/quick-start.html#creating-custom-builds-with-online-builder)
+- [Integating a build from the online builder](https://ckeditor.com/docs/ckeditor5/latest/installation/getting-started/frameworks/react.html#integrating-a-build-from-the-online-builder)
