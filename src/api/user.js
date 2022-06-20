@@ -6,4 +6,8 @@ const create = async (newUser) => {
   return user.data;
 };
 
-export default { create };
+const userService = {
+  create
+};
+
+export default userService;

@@ -1,17 +1,19 @@
 import React from 'react';
 import { Input, Label } from './InputStyles';
-import { useField } from '../hooks';
+import { useField, useAuth } from '../hooks';
 import { LoginButton } from './ButtonStyles';
 import Password from './InputPassword';
 
-const AccountRegisterForm = ({ handleFormSubmit }) => {
+
+const AccountRegisterForm = () => {
   const email = useField('email');
   const username = useField('text');
   const password = useField('password');
+  const auth = useAuth();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    handleFormSubmit({
+    auth.register({
       email: email.value,
       username: username.value,
       password: password.value
@@ -28,6 +30,7 @@ const AccountRegisterForm = ({ handleFormSubmit }) => {
             id="email"
             required
             reset="email"
+            placeholder='请输入邮箱地址'
           />
         </div>
         <div className="md-margin-bottom">
@@ -37,6 +40,7 @@ const AccountRegisterForm = ({ handleFormSubmit }) => {
             id="username"
             required
             reset="username"
+            placeholder='请输入用户名'
           />
         </div>
         <div className="md-margin-bottom">

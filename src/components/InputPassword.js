@@ -22,6 +22,7 @@ const Password = ({ password }) => {
         required
         reset="password"
         type={type}
+        placeholder='请输入密码'
       ></PasswordInput>
       <ButtonWrap>
         {open

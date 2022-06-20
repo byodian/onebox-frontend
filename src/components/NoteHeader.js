@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MenuButton, MenuText, HamburgerButton  } from './ButtonStyles';
 import {
   Header,
@@ -9,7 +9,6 @@ import {
 } from './NoteHeaderStyles';
 import { Hamburger } from './IconStyles';
 import Author from '../assets/author.png';
-import { useVisibility } from '../hooks';
 
 const DropDown = ({ handleLogout }) => {
   return (
@@ -27,7 +26,7 @@ const DropDown = ({ handleLogout }) => {
 };
 
 const NotesHeader = ({ handleLogout }) => {
-  const [visibility, { handleVisibility }] = useVisibility(false);
+  const [visibility, setVisibility] = useState(false);
 
   return (
     <>
@@ -36,7 +35,7 @@ const NotesHeader = ({ handleLogout }) => {
           <Hamburger></Hamburger>
         </HamburgerButton>
         <Nav>
-          <ImgButton onClick={handleVisibility}>
+          <ImgButton onClick={setVisibility}>
             <Img src={Author} alt="用户头像"/>
           </ImgButton>
           { visibility ? <DropDown handleLogout={handleLogout} /> : null }

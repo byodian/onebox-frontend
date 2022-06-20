@@ -1,5 +1,5 @@
-import React from 'react';
-import { useVisibility, useField } from '../hooks';
+import React, { useState } from 'react';
+import { useField } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
 import InputTag from './InputTag';
@@ -11,9 +11,7 @@ import {
   NoteTime,
   NoteContent,
   NoteGroup,
-  IconWrap,
   IconGroup,
-  TagsWrap,
   Tag
 } from './NoteItemStyles';
 
@@ -25,7 +23,7 @@ import {
 } from './IconStyles';
 
 const Note = ({ note, toggleLike, deleteNote, updateTag }) => {
-  const [visibility, { handleVisibility }] = useVisibility(false);
+  const [visibility, setVisibility] = useState(false);
   const tagsState = useField('text', note.tags.join(','));
   const navigate = useNavigate();
 
@@ -35,7 +33,7 @@ const Note = ({ note, toggleLike, deleteNote, updateTag }) => {
 
   const handleTagUpdate = () => {
     updateTag(note.id, tagsState.value);
-    handleVisibility();
+    setVisibility();
   };
 
   return (
@@ -44,27 +42,27 @@ const Note = ({ note, toggleLike, deleteNote, updateTag }) => {
         <NoteTime>{getLocalDate(note.date)}</NoteTime>
         <NoteContent>{parse(note.content)}</NoteContent>
         <NoteGroup onClick={(event) => event.stopPropagation()}>
-          <TagsWrap>
+          <div>
             {note.tags.map((tag, index) => (
-              <Tag key={index} to={`/tags/${tag}`}>
+              <Tag key={index}>
                 {tag}
               </Tag>
             ))}
-          </TagsWrap>
+          </div>
           <IconGroup>
-            <IconWrap>
+            <div>
               {note.like ? (
                 <FavoriteIcon onClick={toggleLike}></FavoriteIcon>
               ) : (
                 <FavoriteBorderIcon onClick={toggleLike}></FavoriteBorderIcon>
               )}
-            </IconWrap>
-            <IconWrap>
+            </div>
+            <div>
               <DeleteIcon onClick={deleteNote}></DeleteIcon>
-            </IconWrap>
-            <IconWrap>
-              <TagIcon onClick={handleVisibility}></TagIcon>
-            </IconWrap>
+            </div>
+            <div>
+              <TagIcon onClick={setVisibility}></TagIcon>
+            </div>
           </IconGroup>
         </NoteGroup>
         {visibility

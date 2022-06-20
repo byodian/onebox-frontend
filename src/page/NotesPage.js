@@ -1,63 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/NoteHeader';
 import Modal from '../components/Modal';
 import FloatButton from '../components/ButtonFloat';
 import NoteItem from '../components/NoteItem';
 import DefaultComponent from '../components/DefaultEl';
 import TextEditor from '../components/TextEditor';
-
-import Alert from '../components/AlertStyles';
 import { Container } from './AppStyles';
-import { Main, Content, ContentWrap } from './NotesPageStyles';
-
+import { Content, ContentWrap } from './AppStyles';
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
-
-import { useVisibility, useMessage, useResource } from '../hooks';
+import { useAuth } from '../hooks';
 import { compare } from '../utils';
-import noteService from '../api/note';
 
-import { useNavigate } from 'react-router-dom';
+import noteService from '../api/note';
+import { Navigate } from 'react-router-dom';
 
 const NotesPage = () => {
-  const [modelVisiblity, { handleVisibility: handleModalShow }] = useVisibility(false);
-  const [{ message, severity }, { handleMessage, removeMessage }] = useMessage();
-  const [notes, { handleResources: handleNotes }] = useResource([]);
-  const navigate = useNavigate();
+  const [modelVisiblity, setModelVisiblity] = useState(false);
+  const [notes, setNotes] = useState([]);
+  const auth = useAuth();
 
   useEffect(() => {
-    const loggedNoteappUser = window.localStorage.getItem('loggedNoteappUser');
-    const { username, token } = JSON.parse(loggedNoteappUser);
-    noteService.setToken(token);
-
     async function fetchNotes() {
       try {
-        const initialNotes = await noteService.getNotesByUser(username);
-        handleNotes(initialNotes.notes.sort(compare));
+        noteService.setToken(auth.token);
+        const initialNotes = await noteService.getNotesByUser(auth.user);
+        setNotes(initialNotes.notes.sort(compare));
       } catch(error) {
-        console.log(error.message);
+        console.error(error.message);
       }
     }
-
     fetchNotes();
-  }, []);
-
-
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedNoteappUser');
-    // setUser(null);
-    // handleTags([]);
-    navigate('/');
-  };
+  }, [auth.token, auth.user]);
 
   const handleNoteAdd = async (noteObject) => {
     try {
       const returnedNote = await noteService.create(noteObject);
-      handleNotes(notes.concat(returnedNote).sort(compare));
-      handleMessage('保存成功', 'success');
-      removeMessage(1000);
-    } catch(exception) {
-      handleMessage('内容不能为空或字数不能少于八', 'error');
-      removeMessage(5000);
+      setNotes(notes.concat(returnedNote).sort(compare));
+    } catch(error) {
+      console.log(error.message);
     }
   };
 
@@ -67,22 +47,18 @@ const NotesPage = () => {
 
     try {
       const updatedNote = await noteService.update(id, changedNote);
-      handleNotes(notes.map(n => n.id !== id ? n : updatedNote));
+      setNotes(notes.map(n => n.id !== id ? n : updatedNote));
     } catch(error) {
-      handleMessage('更新失败', 'error');
-      removeMessage(2000);
+      console.log(error.message);
     }
   };
 
   const handleNoteDelete = async (id) => {
     try {
-      handleNotes(notes.filter(n => n.id !== id));
+      setNotes(notes.filter(n => n.id !== id));
       await noteService.remove(id);
-      handleMessage('删除成功', 'success');
-      removeMessage(1000);
     } catch(error) {
-      handleMessage('删除失败', 'error');
-      removeMessage(2000);
+      console.log(error.message);
     }
   };
 
@@ -92,20 +68,22 @@ const NotesPage = () => {
 
     try {
       const updatedNote = await noteService.update(id, changedNote);
-      handleNotes(notes.map(note => note.id !== id ? note : updatedNote));
+      setNotes(notes.map(note => note.id !== id ? note : updatedNote));
     } catch(error) {
-      handleMessage('更新失败', 'error');
-      removeMessage(2000);
+      console.log(error.message);
     }
   };
 
+  if (!auth.user) {
+    return <Navigate to="/login" replace/>;
+  }
+
   return (
     <Container>
-      <Header handleLogout={handleLogout} />
-      <Main>
+      <Header handleLogout={auth.logout} />
+      <main>
         <ContentWrap>
           <Content>
-            <Alert severity={severity} message={message}>{message}</Alert>
             <TextEditor createNote={handleNoteAdd} />
             {
               notes.length === 0 && (
@@ -126,15 +104,13 @@ const NotesPage = () => {
             </ul>
           </Content>
         </ContentWrap>
-      </Main>
+      </main>
       <Modal
         createNote={handleNoteAdd}
-        message={message}
-        severity={severity}
         show={modelVisiblity}
-        handleShow={handleModalShow}
+        handleShow={setModelVisiblity}
       />
-      <FloatButton handleClick={handleModalShow} />
+      <FloatButton handleClick={setModelVisiblity} />
     </Container>
   );
 };

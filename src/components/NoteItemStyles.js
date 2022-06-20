@@ -13,10 +13,6 @@ export const NoteContentWrap = styled.div`
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
 
-  &:hover {
-    background-color: var(--color-grey-02);
-  }
-
   ul {
     padding: 0 4.0rem;
     list-style-type: disc;
@@ -42,6 +38,11 @@ export const NoteGroup = styled.div`
 export const IconGroup = styled.div`
   margin-left: auto;
   display: flex;
+  column-gap: 8px;
+
+  div {
+    cursor: pointer;
+  }
 `;
 
 export const IconWrap = styled.div`
@@ -67,7 +68,7 @@ export const TagsWrap = styled.div`
   font-size: 1.2rem;
 `;
 
-export const Tag = styled(Link)`
+export const Tag = styled.button`
   display: inline-flex;
   margin-right: var(--space-8);
   padding: var(--space-4) var(--space-8); 
