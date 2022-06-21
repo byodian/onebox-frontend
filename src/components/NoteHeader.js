@@ -35,7 +35,7 @@ const NotesHeader = ({ handleLogout }) => {
           <Hamburger></Hamburger>
         </HamburgerButton>
         <Nav>
-          <ImgButton onClick={setVisibility}>
+          <ImgButton onClick={() => setVisibility(!visibility)}>
             <Img src={Author} alt="用户头像"/>
           </ImgButton>
           { visibility ? <DropDown handleLogout={handleLogout} /> : null }

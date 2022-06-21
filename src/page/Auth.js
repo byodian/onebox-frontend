@@ -28,7 +28,7 @@ const AuthPage = ({ isLogginActive }) => {
           : <AccountRegisterForm />
         }
         <BreakLine />
-        <div className="md-margin-top text-align-center sm1-font-size">
+        <div className="text-center mt-4 text-xl">
           {isLogginActive
             ? <p>还没有账号？<ExtendedLink to="/register">注册</ExtendedLink></p>
             : <p>已有账号？<ExtendedLink to="/login">登陆</ExtendedLink></p>

@@ -23,7 +23,7 @@ const AccountRegisterForm = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <div className="md-margin-bottom">
+        <div className="mb-4">
           <Label htmlFor="email">邮箱地址</Label>
           <Input
             {...email}
@@ -33,7 +33,7 @@ const AccountRegisterForm = () => {
             placeholder='请输入邮箱地址'
           />
         </div>
-        <div className="md-margin-bottom">
+        <div className="mb-4">
           <Label htmlFor="username">用户名</Label>
           <Input
             {...username}
@@ -43,11 +43,11 @@ const AccountRegisterForm = () => {
             placeholder='请输入用户名'
           />
         </div>
-        <div className="md-margin-bottom">
+        <div className="mb-4">
           <Label htmlFor="password">密码</Label>
           <Password password={password}></Password>
         </div>
-        <div>
+        <div class="mt-8">
           <LoginButton id="login-button" type="submit">注册</LoginButton>
         </div>
       </form>
