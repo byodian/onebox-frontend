@@ -61,11 +61,11 @@ export const NavLink = styled(Link)`
   border-bottom: 2px solid transparent;
 
   &:hover {
-    background-color: var(--color-grey-01);
-    border-bottom: 2px solid var(--main-color-highlight);
+    background-color: var(--color-gray-01);
+    border-bottom: 2px solid var(--highlight);
   }
 `;
 
 export const NavRegisterLink = styled(NavLink)`
-  color: var(--main-color-highlight);
+  color: var(--highlight);
 `;

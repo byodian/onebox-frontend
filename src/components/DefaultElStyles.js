@@ -18,5 +18,5 @@ export const DefaultSvgWrap = Styled.div`
 `;
 
 export const Description = Styled.p`
-  color: var(--color-grey-06);
+  color: var(--color-gray-06);
 `;

@@ -42,7 +42,7 @@ export const HamburgerButton = styled.button`
   padding: var(--space-4); 
 
   &:hover {
-    background-color: var(--color-grey-02);
+    background-color: var(--color-gray-02);
   }
 `;
 
@@ -55,7 +55,7 @@ export const MenuButton = styled.button`
   padding: var(--space-4) var(--space-8);
 
   &:hover {
-    background-color: var(--color-grey-02);
+    background-color: var(--color-gray-02);
   }
 `;
 

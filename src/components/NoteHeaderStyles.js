@@ -67,7 +67,7 @@ ThemeButton.defaultProps = {
 export const BreakLine = styled.hr`
   border: none;
   height: 1px;
-  background-color: var(--color-grey-06);
+  background-color: var(--color-gray-06);
   margin-top: var(--space-4);
   margin-bottom: var(--space-4);
 `;

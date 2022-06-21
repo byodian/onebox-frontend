@@ -17,7 +17,7 @@ export const SidebarContainer = styled.nav`
   @media screen and (min-width: 768px) {
     top: var(--space-48);
     height: calc(100% - var(--space-48));
-    background-color: var(--color-grey-01);
+    background-color: var(--color-gray-01);
     border-left: 1px solid transparent;
     border-right: 1px solid var(--main-color);
   }
@@ -51,10 +51,10 @@ export const SidebarLink = styled(Link)`
   }
 
   &:hover {
-    color: var(--main-color-highlight);
+    color: var(--highlight);
 
     path {
-      fill: var(--main-color-highlight);
+      fill: var(--highlight);
     }
   }
 `;
@@ -69,7 +69,7 @@ export const DropdownLink = styled(Link)`
   padding-bottom: var(--space-8);
 
   &:hover {
-    color: var(--main-color-highlight);
+    color: var(--highlight);
   }
 `;
 

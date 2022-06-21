@@ -19,7 +19,7 @@ export const ButtonWrap = styled.span`
   height: 24px;
   margin-top: auto;
   margin-bottom: auto;
-  color: var(--color-grey-06); 
+  color: var(--color-gray-06); 
 `;
 
 export const EyeOpenedButton = styled(EyeOpenedIcon)`

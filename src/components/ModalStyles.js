@@ -19,24 +19,18 @@ export const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--color-back-08);
+  background-color: var(--color-back-06);
 `;
 
 export const ModalContent= styled.div`
-  /* 子元素层叠上下文顺序比 overlay 组件高 */
-  height: 200px;
-  background-color: white;
   position: relative;
+  width: 100%;
+  margin: var(--space-96) auto;
   padding: var(--space-16);
-  margin-top: var(--space-96);
+  background-color: white;
+  border-radius: 4px;
 
-  @media screen and (min-width: 540px) {
-    width: 55%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  @media screen and (min-width: 1120px) {
-    width: 670px;
+  @media screen and (min-width: 768px) {
+    width: 800px;
   }
 `;

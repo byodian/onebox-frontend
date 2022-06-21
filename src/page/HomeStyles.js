@@ -6,7 +6,7 @@ export const Container = styled.div`
   flex-direction: column;
 
   background-color: ${(props) =>
-    props.backgroundColor ? 'var(--color-grey-01)' : 'transparent'};
+    props.backgroundColor ? 'var(--color-gray-01)' : 'transparent'};
 `;
 
 export const HeroHeading = styled.h1`

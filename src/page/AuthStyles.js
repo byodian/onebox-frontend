@@ -21,7 +21,7 @@ export const LogoContainer = styled.div`
 
 export const BreakLine = styled.div`
   height: 1px;
-  background-color: var(--color-grey-04);
+  background-color: var(--color-gray-04);
   margin-top: var(--space-48);
 `;
 

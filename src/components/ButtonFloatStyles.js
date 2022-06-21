@@ -19,13 +19,13 @@ export const FloatActionButton = styled.button`
   height: 56px;
   cursor: pointer;
   user-select: none;
-  background-color: var(--color-grey-02);
+  background-color: white;
   border-radius: 50%;
-  box-shadow: 0px 3px 5px 1px rgb(0 0 0 / 20%);
+  box-shadow: 0px 3px 5px 1px rgb(0 0 0 / 10%);
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: var(--main-color-highlight-01);
-    color: var(--main-color-highlight);
+    background-color: var(--highlight-1);
+    color: var(--highlight);
   }
 `;

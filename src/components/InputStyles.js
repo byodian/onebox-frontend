@@ -15,7 +15,7 @@ export const Input = styled.input`
   outline: none;
 
   &::placeholder {
-    color: var(--color-grey-05);
+    color: var(--color-gray-05);
     font-size: 1.4rem;
   }
 
