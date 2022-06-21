@@ -3,6 +3,7 @@ import Header from '../components/NoteHeader';
 import Modal from '../components/Modal';
 import FloatButton from '../components/ButtonFloat';
 import NoteItem from '../components/NoteItem';
+import NoteItemIcon from '../components/NoteItemIcon';
 import DefaultComponent from '../components/DefaultEl';
 import TextEditor from '../components/TextEditor';
 import { Main } from './AppStyles';
@@ -16,6 +17,7 @@ import { Navigate } from 'react-router-dom';
 const NotesPage = () => {
   const [visible, setVisible] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [currentId, setCurrentId] = useState('');
   const auth = useAuth();
 
   useEffect(() => {
@@ -31,16 +33,38 @@ const NotesPage = () => {
     fetchNotes();
   }, [auth.token, auth.user]);
 
+  const handleModelVisible = (id, type) => {
+    setVisible(!visible);
+
+    console.log('id', id);
+    if (type === 'update') {
+      setCurrentId(id);
+    } else {
+      setCurrentId('');
+    }
+  };
+
   const handleNoteAdd = async (noteObject) => {
     try {
       const returnedNote = await noteService.create(noteObject);
       setNotes(notes.concat(returnedNote).sort(compare));
+      setVisible(false);
     } catch(error) {
       console.log(error.message);
     }
   };
 
-  const toggleLikeOf = async (id) => {
+  const handleNoteUpdate = async (noteObject) => {
+    try {
+      setVisible(false);
+      const updatedNote = await noteService.update(currentId, noteObject);
+      setNotes(notes.map(note => note.id === currentId ? updatedNote : note));
+    } catch(error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleStarToggle = async (id) => {
     const note = notes.find(note => note.id === id);
     const changedNote = { ...note, like: !note.like };
 
@@ -81,7 +105,7 @@ const NotesPage = () => {
     <div className="relative">
       <Header handleLogout={auth.logout} />
       <Main>
-        <TextEditor createNote={handleNoteAdd} />
+        <TextEditor handleNoteSubmit={handleNoteAdd} />
         {
           notes.length === 0 && (
             <div>
@@ -91,21 +115,31 @@ const NotesPage = () => {
         <ul>
           {notes.map(note =>
             <NoteItem
-              key={note.id}
               note={note}
-              toggleLike={() => toggleLikeOf(note.id)}
-              deleteNote={() => handleNoteDelete(note.id)}
-              updateTag={handleTagUpdate}
-            />
+              key={note.id}
+            >
+              <NoteItemIcon
+                tags={note.tags}
+                like={note.like}
+                toggleLike={() => handleStarToggle(note.id)}
+                deleteNote={() => handleNoteDelete(note.id)}
+                updateTag={(tags) => handleTagUpdate(note.id, tags)}
+                toggleVisible={() => handleModelVisible(note.id, 'update')}
+              />
+            </NoteItem>
           )}
         </ul>
       </Main>
       <Modal
-        createNote={handleNoteAdd}
         show={visible}
         handleShow={() => setVisible(!visible)}
-      />
-      <FloatButton handleClick={setVisible} />
+      >
+        <TextEditor
+          handleNoteSubmit={currentId ? handleNoteUpdate : handleNoteAdd}
+          initialContent={currentId ? notes.find(n => n.id === currentId)?.content : ''}
+        />
+      </Modal>
+      <FloatButton handleClick={() => handleModelVisible(null, 'create')} />
     </div>
   );
 };

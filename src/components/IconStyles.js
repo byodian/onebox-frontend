@@ -1,9 +1,10 @@
 import {
   MdMenu,
-  MdFavoriteBorder,
-  MdFavorite,
+  MdOutlineStarBorder,
+  MdOutlineStar,
   MdClear,
-  MdAdd
+  MdAdd,
+  MdOutlineMode
 } from 'react-icons/md';
 import { BiTrash } from 'react-icons/bi';
 import { BsTag, BsEye, BsEyeSlash } from 'react-icons/bs';
@@ -34,11 +35,11 @@ export const PlusIcon = styled(MdAdd)`
   height: 24px;
 `;
 
-export const FavoriteBorderIcon = styled(MdFavoriteBorder)`
+export const StarBorderIcon = styled(MdOutlineStarBorder)`
 `;
 
-export const FavoriteIcon = styled(MdFavorite)`
-  color: var(--color-red-03);
+export const StarIcon = styled(MdOutlineStar)`
+  color: var(--highlight);
 `;
 
 export const DeleteIcon = styled(BiTrash)``;
@@ -49,3 +50,4 @@ export const EyeOpenedIcon = styled(BsEye)``;
 
 export const EyeHidedIcon = styled(BsEyeSlash)``;
 
+export const CreateIcon = styled(MdOutlineMode)``;

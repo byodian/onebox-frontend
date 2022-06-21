@@ -1,35 +1,19 @@
-import React, { useState } from 'react';
-import { useField } from '../hooks';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
-import InputTag from './InputTag';
 import { getLocalDate } from '../utils';
 
-import {
-  FavoriteBorderIcon,
-  FavoriteIcon,
-  DeleteIcon,
-  TagIcon,
-} from './IconStyles';
-
-const Note = ({ note, toggleLike, deleteNote, updateTag }) => {
-  const [visibility, setVisibility] = useState(false);
-  const tagsState = useField('text', note.tags.join(','));
+const Note = ({ note, children }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/notes/${note.id}`);
   };
 
-  const handleTagUpdate = () => {
-    updateTag(note.id, tagsState.value);
-    setVisibility(!visibility);
-  };
-
   return (
     <li
       onClick={handleClick}
-      className="flex flex-col gap-y-4 py-6 px-8 cursor-pointer border-b border-b-gray-100 hover:bg-gray-50"
+      className="flex flex-col gap-y-4 py-6 px-8 cursor-pointer border-b first:border-t border-b-gray-100 hover:bg-gray-50"
     >
       <time className="block text-2xl text-gray-400">{getLocalDate(note.date)}</time>
       <div className="prose prose-2xl">{parse(note.content)}</div>
@@ -44,26 +28,8 @@ const Note = ({ note, toggleLike, deleteNote, updateTag }) => {
             </button>
           ))}
         </div>
-        <div className="flex ml-auto items-center gap-x-6">
-          <div className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]">
-            {note.like ? (
-              <FavoriteIcon onClick={toggleLike}></FavoriteIcon>
-            ) : (
-              <FavoriteBorderIcon onClick={toggleLike}></FavoriteBorderIcon>
-            )}
-          </div>
-          <div className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]">
-            <DeleteIcon onClick={deleteNote}></DeleteIcon>
-          </div>
-          <div className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]">
-            <TagIcon onClick={() => setVisibility(!visibility)}></TagIcon>
-          </div>
-        </div>
+        {children}
       </div>
-      {visibility
-        ? <InputTag tagsState={tagsState} handleTagsSubmit={handleTagUpdate} note={note}/>
-        : null
-      }
     </li>
   );
 };
