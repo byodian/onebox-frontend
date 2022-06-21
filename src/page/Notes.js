@@ -12,12 +12,13 @@ import { useAuth } from '../hooks';
 import { compare } from '../utils';
 
 import noteService from '../api/note';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const NotesPage = () => {
   const [visible, setVisible] = useState(false);
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
+  const navigate = useNavigate();
   const auth = useAuth();
 
   useEffect(() => {
@@ -125,6 +126,7 @@ const NotesPage = () => {
                 deleteNote={() => handleNoteDelete(note.id)}
                 updateTag={(tags) => handleTagUpdate(note.id, tags)}
                 toggleVisible={() => handleModelVisible(note.id, 'update')}
+                goDetail={() => navigate('/notes/' + note.id)}
               />
             </NoteItem>
           )}

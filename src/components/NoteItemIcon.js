@@ -7,11 +7,13 @@ import {
   CreateIcon,
   StarBorderIcon,
   StarIcon,
+  DetailIcon
 } from './IconStyles';
 
 // import { useField } from '../hooks/';
 
-const NoteItemIcon = ({ tags, like, toggleLike, toggleVisible, deleteNote, updateTag }) => {
+const NoteItemIcon = ({ tags, like, toggleLike, toggleVisible, deleteNote, updateTag, goDetail }) => {
+
   // const tagsState = useField('text', tags.join(','));
   const [visibility, setVisibility] = useState(false);
 
@@ -19,7 +21,7 @@ const NoteItemIcon = ({ tags, like, toggleLike, toggleVisible, deleteNote, updat
     {
       element: <TagIcon />,
       onClick: () => setVisibility(!visibility),
-      label: '标签'
+      label: '开发中...'
     },
     {
       element: like ? <StarIcon /> : <StarBorderIcon />,
@@ -30,6 +32,11 @@ const NoteItemIcon = ({ tags, like, toggleLike, toggleVisible, deleteNote, updat
       element: <CreateIcon />,
       onClick: toggleVisible,
       label: '编辑'
+    },
+    {
+      element: <DetailIcon />,
+      onClick: goDetail,
+      label: '查看详情'
     },
     {
       element: <DeleteIcon />,

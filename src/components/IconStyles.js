@@ -4,7 +4,8 @@ import {
   MdOutlineStar,
   MdClear,
   MdAdd,
-  MdOutlineMode
+  MdOutlineMode,
+  MdOutlineArticle
 } from 'react-icons/md';
 import { BiTrash } from 'react-icons/bi';
 import { BsTag, BsEye, BsEyeSlash } from 'react-icons/bs';
@@ -51,3 +52,5 @@ export const EyeOpenedIcon = styled(BsEye)``;
 export const EyeHidedIcon = styled(BsEyeSlash)``;
 
 export const CreateIcon = styled(MdOutlineMode)``;
+
+export const DetailIcon = styled(MdOutlineArticle)``;

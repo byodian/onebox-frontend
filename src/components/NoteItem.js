@@ -1,19 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
 import { getLocalDate } from '../utils';
 
 const Note = ({ note, children }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`/notes/${note.id}`);
-  };
-
   return (
     <li
-      onClick={handleClick}
-      className="flex flex-col gap-y-4 py-6 px-8 cursor-pointer border-b first:border-t border-b-gray-100 hover:bg-gray-50"
+      className="flex flex-col gap-y-4 py-6 px-8 border-b first:border-t border-b-gray-100 hover:bg-gray-50"
     >
       <time className="block text-2xl text-gray-400">{getLocalDate(note.date)}</time>
       <div className="prose prose-2xl">{parse(note.content)}</div>
