@@ -10,10 +10,10 @@ import {
   Heading,
   BreakLine,
   FormContainer,
-  ExtendedLink
+  ExtendedLink,
 } from './AuthStyles';
 
-const AuthPage = ({ isLogginActive }) => {
+function AuthPage({ isLogginActive }) {
   const headingText = isLogginActive ? '登录' : '注册';
 
   return (
@@ -23,20 +23,26 @@ const AuthPage = ({ isLogginActive }) => {
       </LogoContainer>
       <FormContainer>
         <Heading>{headingText}</Heading>
-        {isLogginActive
-          ? <AccountLoginForm />
-          : <AccountRegisterForm />
-        }
+        {isLogginActive ? <AccountLoginForm /> : <AccountRegisterForm />}
         <BreakLine />
         <div className="text-center mt-4 text-xl">
           {isLogginActive
-            ? <p>还没有账号？<ExtendedLink to="/register">注册</ExtendedLink></p>
-            : <p>已有账号？<ExtendedLink to="/login">登陆</ExtendedLink></p>
-          }
+            ? (
+              <p>
+                还没有账号？
+                <ExtendedLink to="/register">注册</ExtendedLink>
+              </p>
+            )
+            : (
+              <p>
+                已有账号？
+                <ExtendedLink to="/login">登陆</ExtendedLink>
+              </p>
+            )}
         </div>
       </FormContainer>
     </Container>
   );
-};
+}
 
 export default AuthPage;

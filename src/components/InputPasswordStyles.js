@@ -1,11 +1,5 @@
 import styled from 'styled-components';
 import { EyeOpenedIcon, EyeHidedIcon } from './IconStyles';
-import { Input } from './InputStyles';
-export const TogglePassword = styled.div`
-  position: relative;
-`;
-
-export const PasswordInput = styled(Input)``;
 
 export const ButtonWrap = styled.span`
   position: absolute; 

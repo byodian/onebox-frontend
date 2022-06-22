@@ -16,11 +16,9 @@ export const Button = styled.button`
     background-color: #000;
   }
 
-  ${props =>
-    props.primary &&
-    css`
-      background: palevioletred;
-      color: white;
+  ${(props) => props.primary && css`
+    background: palevioletred;
+    color: white;
   `}
 `;
 

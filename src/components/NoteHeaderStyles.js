@@ -54,14 +54,14 @@ export const ThemeButton = styled.button`
   height: 24px;
   border: 1px solid var(--main-color);
   border-radius: 50%;
-  background-color: ${props => props.theme.color === 'dark' ? '#333' : '#fff'}; 
-  margin-left: ${props => props.space ? 'var(--space-8)': '0'};
+  background-color: ${(props) => (props.theme.color === 'dark' ? '#333' : '#fff')}; 
+  margin-left: ${(props) => (props.space ? 'var(--space-8)' : '0')};
 `;
 
 ThemeButton.defaultProps = {
   theme: {
-    color: 'white'
-  }
+    color: 'white',
+  },
 };
 
 export const BreakLine = styled.hr`

@@ -20,18 +20,18 @@ const editorConfig = {
       'codeBlock',
       'removeFormat',
       'undo',
-      'redo'
+      'redo',
 
-    ]
-  }
+    ],
+  },
 };
 
-const TextEditor = ({ handleNoteSubmit, initialContent }) => {
+function TextEditor({ handleNoteSubmit, initialContent }) {
   const [text, setText] = useState('');
 
   useEffect(() => {
     setText(initialContent || '');
-  },[initialContent]);
+  }, [initialContent]);
 
   const handleNoteSave = async () => {
     if (text === '') {
@@ -51,7 +51,7 @@ const TextEditor = ({ handleNoteSubmit, initialContent }) => {
     <div className="py-6">
       <CKEditor
         editor={Editor}
-        config = { editorConfig }
+        config={editorConfig}
         data={text}
         onChange={(event, editor) => {
           setText(editor.getData());
@@ -68,6 +68,6 @@ const TextEditor = ({ handleNoteSubmit, initialContent }) => {
       </div>
     </div>
   );
-};
+}
 
 export default TextEditor;

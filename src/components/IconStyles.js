@@ -5,7 +5,7 @@ import {
   MdClear,
   MdAdd,
   MdOutlineMode,
-  MdOutlineArticle
+  MdOutlineArticle,
 } from 'react-icons/md';
 import { BiTrash } from 'react-icons/bi';
 import { BsTag, BsEye, BsEyeSlash } from 'react-icons/bs';

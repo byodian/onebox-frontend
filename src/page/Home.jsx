@@ -20,10 +20,10 @@ import {
   FeatureDetail,
   FeatureHeading,
   ImgWrapper,
-  Section
+  Section,
 } from './HomeStyles';
 
-const Home = () => {
+function Home() {
   return (
     <>
       <Header />
@@ -36,8 +36,8 @@ const Home = () => {
               <Button as={Link} to="/register">立刻加入</Button>
             </HeroWrapper>
             <div>
-              <img src={Hero} alt="使用 onebox 想记就记"/>
-              <img className="placeholder-img" src={Placeholder} alt="使用 onebox 想记就记"/>
+              <img src={Hero} alt="使用 onebox 想记就记" />
+              <img className="placeholder-img" src={Placeholder} alt="使用 onebox 想记就记" />
             </div>
           </HeroSection>
         </Container>
@@ -48,7 +48,7 @@ const Home = () => {
               <FeatureDetail>告别分类整理的压力，尽情记录</FeatureDetail>
             </div>
             <ImgWrapper>
-              <img src={Feature1} alt="使用 onebox 想记就记"/>
+              <img src={Feature1} alt="使用 onebox 想记就记" />
             </ImgWrapper>
           </Section>
         </Container>
@@ -59,7 +59,7 @@ const Home = () => {
               <FeatureDetail>定期回顾，从中获取新的视角和想法</FeatureDetail>
             </div>
             <ImgWrapper reverse>
-              <img src={Feature2} alt="使用 onebox 想记就记"/>
+              <img src={Feature2} alt="使用 onebox 想记就记" />
             </ImgWrapper>
           </Section>
         </Container>
@@ -70,14 +70,14 @@ const Home = () => {
               <FeatureDetail>通过自定义标签，快速查找笔记</FeatureDetail>
             </div>
             <ImgWrapper>
-              <img src={Feature3} alt="使用 onebox 想记就记"/>
+              <img src={Feature3} alt="使用 onebox 想记就记" />
             </ImgWrapper>
           </Section>
         </Container>
         <Container>
           <Section>
             <ImgWrapper hasJoinBtn reverse>
-              <img src={FooterImgage} alt="使用 onebox 想记就记"/>
+              <img src={FooterImgage} alt="使用 onebox 想记就记" />
             </ImgWrapper>
             <div className="text-align-center">
               <FeatureHeading>将所有想法装进BOX</FeatureHeading>
@@ -92,6 +92,6 @@ const Home = () => {
       <Footer />
     </>
   );
-};
+}
 
 export default Home;

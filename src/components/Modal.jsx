@@ -1,15 +1,15 @@
 import React from 'react';
 import { ModalWrap, ModalContent, Overlay } from './ModalStyles';
 
-const Modal = ({ show, handleShow, children }) => {
+function Modal({ show, handleShow, children }) {
   return (
     <ModalWrap show={show}>
-      <Overlay onClick={handleShow}></Overlay>
+      <Overlay onClick={handleShow} />
       <ModalContent>
         {children}
       </ModalContent>
     </ModalWrap>
   );
-};
+}
 
 export default Modal;

@@ -8,8 +8,8 @@ export const ModalWrap = styled.div`
   height: 100%;
   z-index: 401;
   overflow: auto;
-  opacity: ${props => props.show ? '1' : '0'};
-  visibility: ${props => props.show ? 'visible' : 'hidden'};
+  opacity: ${(props) => (props.show ? '1' : '0')};
+  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
   transition: all 0.2s ease-in-out;
 `;
 
@@ -22,7 +22,7 @@ export const Overlay = styled.div`
   background-color: var(--color-back-06);
 `;
 
-export const ModalContent= styled.div`
+export const ModalContent = styled.div`
   position: relative;
   width: 100%;
   margin: var(--space-96) auto;

@@ -2,15 +2,14 @@ import React from 'react';
 import { FloatContainer, FloatActionButton } from './ButtonFloatStyles';
 import { PlusIcon } from './IconStyles';
 
-const FloatButton = ({ handleClick }) => {
-
+function FloatButton({ handleClick }) {
   return (
     <FloatContainer>
       <FloatActionButton onClick={handleClick}>
-        <PlusIcon></PlusIcon>
+        <PlusIcon />
       </FloatActionButton>
     </FloatContainer>
   );
-};
+}
 
 export default FloatButton;

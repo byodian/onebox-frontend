@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  // Flex-items are stretched in cross axios (from left to right)
+  /* Flex-items are stretched in cross axios (from left to right) */
   display: flex;
   flex-direction: column;
 
-  background-color: ${(props) =>
-    props.backgroundColor ? 'var(--color-gray-01)' : 'transparent'};
+  background-color: ${(props) => (props.backgroundColor ? 'var(--color-gray-01)' : 'transparent')};
 `;
 
 export const HeroHeading = styled.h1`
@@ -37,7 +36,7 @@ export const Section = styled.section`
   }
 
   @media (min-width: 768px) {
-    flex-direction: ${props => props.reverse ? 'row-reverse' : 'row' };
+    flex-direction: ${(props) => (props.reverse ? 'row-reverse' : 'row')};
     text-align: left;
     align-items: center;
     justify-content: space-between;
@@ -46,8 +45,8 @@ export const Section = styled.section`
   }
 
   @media (min-width: 1120px) {
-    // Avoid width being affected by automatic margins 
-    // becomeing smaller
+    /* Avoid width being affected by automatic margins */ 
+    /* becomeing smaller */
     width: 100%;
     max-width: 1120px;
     margin: 0 auto;
@@ -63,7 +62,7 @@ export const HeroSection = styled(Section)`
 `;
 
 export const HeroWrapper = styled.div`
-  // the priority order on the z-axios copmared to normal elements
+  /* the priority order on the z-axios copmared to normal elements */
   position: relative;
 
   @media (min-width: 540px) {
@@ -96,9 +95,9 @@ export const FeatureDetail = styled.p`
 export const ImgWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: ${props => props.hasJoinBtn ? 'var(--space-32)' : '0' };
+  margin-bottom: ${(props) => (props.hasJoinBtn ? 'var(--space-32)' : '0')};
 
   @media (min-width: 768px) {
-    margin-bottom: ${props => props.hasJoinBtn && '0' };
+    margin-bottom: ${(props) => props.hasJoinBtn && '0'};
   }
 `;

@@ -41,14 +41,14 @@ export const Nav = styled.nav`
 `;
 
 export const NavItems = styled.ul`
-  // align-items: stretch (by default)
-  // The flex items will stretch to fill the size of the cross axios
+  /* align-items: stretch (by default) */
+  /* The flex items will stretch to fill the size of the cross axios */
   display: flex; 
   height: 100%; // 64px
 `;
 
 export const NavItem = styled.li`
-  // The flex items will stretch to fill the size of the cross axios
+  /* The flex items will stretch to fill the size of the cross axios */
   display: flex;
 `;
 

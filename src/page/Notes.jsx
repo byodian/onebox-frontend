@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import Header from '../components/NoteHeader';
 import Modal from '../components/Modal';
 import FloatButton from '../components/ButtonFloat';
@@ -6,15 +7,14 @@ import NoteItem from '../components/NoteItem';
 import NoteItemIcon from '../components/NoteItemIcon';
 import DefaultComponent from '../components/DefaultEl';
 import TextEditor from '../components/TextEditor';
-import { Main } from './AppStyles';
+import Main from './AppStyles';
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 import { useAuth } from '../hooks';
 import { compare } from '../utils';
 
 import noteService from '../api/note';
-import { Navigate, useNavigate } from 'react-router-dom';
 
-const NotesPage = () => {
+function NotesPage() {
   const [visible, setVisible] = useState(false);
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
@@ -27,7 +27,7 @@ const NotesPage = () => {
         noteService.setToken(auth.token);
         const initialNotes = await noteService.getNotesByUser(auth.user);
         setNotes(initialNotes.notes.sort(compare));
-      } catch(error) {
+      } catch (error) {
         console.error(error.message);
       }
     }
@@ -50,7 +50,7 @@ const NotesPage = () => {
       const returnedNote = await noteService.create(noteObject);
       setNotes(notes.concat(returnedNote).sort(compare));
       setVisible(false);
-    } catch(error) {
+    } catch (error) {
       console.log(error.message);
     }
   };
@@ -59,47 +59,47 @@ const NotesPage = () => {
     try {
       setVisible(false);
       const updatedNote = await noteService.update(currentId, noteObject);
-      setNotes(notes.map(note => note.id === currentId ? updatedNote : note));
-    } catch(error) {
+      setNotes(notes.map((note) => (note.id === currentId ? updatedNote : note)));
+    } catch (error) {
       console.log(error.message);
     }
   };
 
   const handleStarToggle = async (id) => {
-    const note = notes.find(note => note.id === id);
+    const note = notes.find((item) => item.id === id);
     const changedNote = { ...note, like: !note.like };
 
     try {
-      const updatedNote = await noteService.update(id, changedNote);
-      setNotes(notes.map(n => n.id !== id ? n : updatedNote));
-    } catch(error) {
+      setNotes(notes.map((n) => (n.id !== id ? n : changedNote)));
+      await noteService.update(id, changedNote);
+    } catch (error) {
       console.log(error.message);
     }
   };
 
   const handleNoteDelete = async (id) => {
     try {
-      setNotes(notes.filter(n => n.id !== id));
+      setNotes(notes.filter((n) => n.id !== id));
       await noteService.remove(id);
-    } catch(error) {
+    } catch (error) {
       console.log(error.message);
     }
   };
 
   const handleTagUpdate = async (id, tags) => {
-    const note = notes.find(n => n.id === id);
-    const changedNote = { ...note, tags: tags };
+    const oldNote = notes.find((n) => n.id === id);
+    const changedNote = { ...oldNote, tags };
 
     try {
       const updatedNote = await noteService.update(id, changedNote);
-      setNotes(notes.map(note => note.id !== id ? note : updatedNote));
-    } catch(error) {
+      setNotes(notes.map((note) => (note.id !== id ? note : updatedNote)));
+    } catch (error) {
       console.log(error.message);
     }
   };
 
   if (!auth.user) {
-    return <Navigate to="/login" replace/>;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -111,10 +111,11 @@ const NotesPage = () => {
           notes.length === 0 && (
             <div>
               <DefaultComponent icon={<DefaultHomeSvg />} text="写点什么吧？" />
-            </div>)
+            </div>
+          )
         }
         <ul>
-          {notes.map(note =>
+          {notes.map((note) => (
             <NoteItem
               note={note}
               key={note.id}
@@ -126,10 +127,10 @@ const NotesPage = () => {
                 deleteNote={() => handleNoteDelete(note.id)}
                 updateTag={(tags) => handleTagUpdate(note.id, tags)}
                 toggleVisible={() => handleModelVisible(note.id, 'update')}
-                goDetail={() => navigate('/notes/' + note.id)}
+                goDetail={() => navigate(`/notes/${note.id}`)}
               />
             </NoteItem>
-          )}
+          ))}
         </ul>
       </Main>
       <Modal
@@ -138,13 +139,12 @@ const NotesPage = () => {
       >
         <TextEditor
           handleNoteSubmit={currentId ? handleNoteUpdate : handleNoteAdd}
-          initialContent={currentId ? notes.find(n => n.id === currentId)?.content : ''}
+          initialContent={currentId ? notes.find((n) => n.id === currentId)?.content : ''}
         />
       </Modal>
       <FloatButton handleClick={() => handleModelVisible(null, 'create')} />
     </div>
   );
-};
-
+}
 
 export default NotesPage;

@@ -1,18 +1,10 @@
 import React, { useState, useContext, createContext } from 'react';
-import { authService, userService } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { authService, userService } from '../api';
 
 const authContext = createContext();
 
-export function ProvideAuth({ children }) {
-  const auth = useProvidedAuth();
-
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
-}
-
-const useAuth = () => {
-  return useContext(authContext);
-};
+const useAuth = () => useContext(authContext);
 
 function useProvidedAuth() {
   const initialUser = JSON.parse(localStorage.getItem('user'));
@@ -24,11 +16,11 @@ function useProvidedAuth() {
 
   const login = async (userObject) => {
     try {
-      const { username, token } = await authService.login(userObject);
+      const { username, token: userToken } = await authService.login(userObject);
       localStorage.setItem('user', JSON.stringify(username));
-      localStorage.setItem('token', JSON.stringify(token));
+      localStorage.setItem('token', JSON.stringify(userToken));
       setUser(username);
-      setToken(token);
+      setToken(userToken);
       navigate('/notes');
     } catch (error) {
       // handleMessage('用户名或密码不正确', 'error');
@@ -40,7 +32,7 @@ function useProvidedAuth() {
     try {
       await userService.create(newUser);
       navigate('/login');
-    } catch(error) {
+    } catch (error) {
       // handleMessage('您输入的邮箱地址或用户名已被使用', 'error');
       console.dir(error.message);
     }
@@ -56,8 +48,14 @@ function useProvidedAuth() {
     token,
     login,
     register,
-    logout
+    logout,
   };
+}
+
+export function ProvideAuth({ children }) {
+  const auth = useProvidedAuth();
+
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
 export default useAuth;

@@ -16,7 +16,3 @@ export const DefaultSvgWrap = Styled.div`
     height: auto;
   }
 `;
-
-export const Description = Styled.p`
-  color: var(--color-gray-06);
-`;

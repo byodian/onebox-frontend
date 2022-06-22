@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Main = styled.main`
+const Main = styled.main`
   padding: var(--space-32) var(--space-16);
   min-height: calc(100vh - var(--space-48));
 
@@ -9,3 +9,5 @@ export const Main = styled.main`
     margin: 0 auto;
   }
 `;
+
+export default Main;

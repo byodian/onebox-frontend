@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
-import { Main } from './AppStyles';
+import { useParams } from 'react-router-dom';
+import Main from './AppStyles';
 
 import noteService from '../api/note';
 import { getLocalDate } from '../utils';
 
-import { useParams } from 'react-router-dom';
-
-const NoteContent = ({ note }) => {
+function NoteContent({ note }) {
   return (
     <div className="prose prose-2xl">
       <p>
@@ -16,9 +15,9 @@ const NoteContent = ({ note }) => {
       {parse(note.content)}
     </div>
   );
-};
+}
 
-const Note = () => {
+function Note() {
   const params = useParams();
   const [note, setNote] = useState(null);
 
@@ -27,7 +26,7 @@ const Note = () => {
       try {
         const returnedNote = await noteService.getById(params.id);
         setNote(returnedNote);
-      } catch(error) {
+      } catch (error) {
         console.log(error);
       }
     };
@@ -39,10 +38,9 @@ const Note = () => {
     <Main>
       {note
         ? <NoteContent note={note} />
-        : null
-      }
+        : null}
     </Main>
   );
-};
+}
 
 export default Note;

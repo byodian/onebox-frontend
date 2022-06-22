@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Container = styled.footer`
+const FooterContainer = styled.footer`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,3 +16,5 @@ export const Container = styled.footer`
     width: 45px;
   }
 `;
+
+export default FooterContainer;
