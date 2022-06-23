@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const Main = styled.main`
   padding: var(--space-32) var(--space-16);

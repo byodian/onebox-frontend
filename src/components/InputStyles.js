@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const Label = styled.label`
   font-weight: bold;
-  font-size: 1.4rem;
+  font-size: 1rem;
   margin-bottom: var(--space-4);
 `;
 
@@ -16,7 +16,7 @@ export const Input = styled.input`
 
   &::placeholder {
     color: var(--color-gray-05);
-    font-size: 1.4rem;
+    font-size: 1rem;
   }
 
   &:focus:invalid {

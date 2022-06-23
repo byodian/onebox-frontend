@@ -12,7 +12,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalCloseButton,
   Button,
   Spinner,
@@ -33,7 +32,6 @@ import noteService from '../api/note';
 
 // let uid = 0;
 function NotesPage() {
-  const [visible, setVisible] = useState(false);
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -75,9 +73,7 @@ function NotesPage() {
   */
   const handleNoteAdd = async (noteObject) => {
     try {
-      // 关闭编辑器弹框 ovlerlay
-      setVisible(false);
-
+      onEditorClose();
       const createdNote = await noteService.create(noteObject);
       setNotes(notes.concat(createdNote).sort(compare));
     } catch (error) {
@@ -91,7 +87,7 @@ function NotesPage() {
   */
   const handleNoteUpdate = async (updatedNote) => {
     try {
-      setVisible(false);
+      onEditorClose();
       // 目前只能更新内容
       setNotes(notes.map((note) => (
         note.id === currentId

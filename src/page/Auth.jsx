@@ -7,7 +7,6 @@ import AccountRegisterForm from '../components/AccountRegisterForm';
 import {
   Container,
   LogoContainer,
-  Heading,
   BreakLine,
   FormContainer,
   ExtendedLink,
@@ -22,10 +21,10 @@ function AuthPage({ isLogginActive }) {
         <Logo />
       </LogoContainer>
       <FormContainer>
-        <Heading>{headingText}</Heading>
+        <h2 className="text-center text-2xl">{headingText}</h2>
         {isLogginActive ? <AccountLoginForm /> : <AccountRegisterForm />}
         <BreakLine />
-        <div className="text-center mt-4 text-xl">
+        <div className="text-center mt-4">
           {isLogginActive
             ? (
               <p>

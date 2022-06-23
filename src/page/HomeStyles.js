@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const Container = styled.div`
   /* Flex-items are stretched in cross axios (from left to right) */

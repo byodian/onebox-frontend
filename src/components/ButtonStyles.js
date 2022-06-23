@@ -1,13 +1,14 @@
-import styled, { css } from 'styled-components';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 export const Button = styled.button`
   display: inline-block;
-  padding: 0.8rem 1.6rem;
+  padding: 0.6rem 1rem;
   background-color: #333;
   border-radius: var(--radius-md);
-  font-size: var(--heading-sm-font-size);
+  font-size: 1rem;
   white-space: nowrap;
-  min-width: 13rem;
+  min-width: 10rem;
   color: #fff;
   text-align: center;
   transition: background-color 0.2s ease;

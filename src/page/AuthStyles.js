@@ -1,10 +1,5 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
-
-export const Heading = styled.h1`
-  text-align: center;
-  font-size: var(--heading-md-font-size);
-`;
 
 export const ExtendedLink = styled(Link)`
   color: var(--color-red-06);

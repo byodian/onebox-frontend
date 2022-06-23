@@ -9,7 +9,7 @@ import {
 } from 'react-icons/md';
 import { BiTrash } from 'react-icons/bi';
 import { BsTag, BsEye, BsEyeSlash } from 'react-icons/bs';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const Icon = styled.div`
   display: flex;

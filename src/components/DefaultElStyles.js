@@ -1,14 +1,6 @@
-import Styled from 'styled-components';
+import Styled from '@emotion/styled';
 
-export const DefaultComponentWrap = Styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 55vh; 
-`;
-
-export const DefaultSvgWrap = Styled.div`
+const SvgWrapper = Styled.div`
   display: flex;
   margin-bottom: var(--space-16);
   svg {
@@ -16,3 +8,5 @@ export const DefaultSvgWrap = Styled.div`
     height: auto;
   }
 `;
+
+export default SvgWrapper;

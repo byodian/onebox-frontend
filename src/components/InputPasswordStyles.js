@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { EyeOpenedIcon, EyeHidedIcon } from './IconStyles';
 
 export const ButtonWrap = styled.span`

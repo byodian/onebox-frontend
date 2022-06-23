@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 
 export const Header = styled.header`
@@ -32,7 +32,7 @@ export const Header = styled.header`
 
 export const Nav = styled.nav`
   display: none;
-  height: 100%; // 64px
+  height: 100%;
 
   @media (min-width: 480px) {
     display: block;
@@ -44,7 +44,7 @@ export const NavItems = styled.ul`
   /* align-items: stretch (by default) */
   /* The flex items will stretch to fill the size of the cross axios */
   display: flex; 
-  height: 100%; // 64px
+  height: 100%;
 `;
 
 export const NavItem = styled.li`
@@ -59,6 +59,7 @@ export const NavLink = styled(Link)`
   padding: 0 var(--space-16);
   border-top: 2px solid transparent;
   border-bottom: 2px solid transparent;
+  font-size: 1.2rem;
 
   &:hover {
     background-color: var(--color-gray-01);
