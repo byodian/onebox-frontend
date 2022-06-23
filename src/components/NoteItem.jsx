@@ -11,9 +11,9 @@ function Note({ note, children }) {
       <div className="prose prose-2xl max-w-full">{parse(note.content)}</div>
       <div className="flex select-none cursor-auto">
         <div className="flex text-xl gap-x-6 items-center">
-          {note.tags.map((tag, index) => (
+          {note.tags.map((tag) => (
             <button
-              key={index}
+              key={tag}
               className="py-[1.5px] px-2 rounded-sm bg-[color:var(--highlight-1)] hover:text-[color:var(--highlight)]"
               type="button"
             >

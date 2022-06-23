@@ -11,9 +11,9 @@ import Main from './AppStyles';
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 import { useAuth } from '../hooks';
 import { compare } from '../utils';
-
 import noteService from '../api/note';
 
+let uid = 0;
 function NotesPage() {
   const [visible, setVisible] = useState(false);
   const [notes, setNotes] = useState([]);
@@ -26,7 +26,7 @@ function NotesPage() {
       try {
         noteService.setToken(auth.token);
         const initialNotes = await noteService.getNotesByUser(auth.user);
-        setNotes(initialNotes.notes.sort(compare));
+        setNotes(initialNotes);
       } catch (error) {
         console.error(error.message);
       }
@@ -37,7 +37,6 @@ function NotesPage() {
   const handleModelVisible = (id, type) => {
     setVisible(!visible);
 
-    console.log('id', id);
     if (type === 'update') {
       setCurrentId(id);
     } else {
@@ -45,21 +44,46 @@ function NotesPage() {
     }
   };
 
+  /**
+  * 目前只能新增笔记内容
+  * @param {Object} noteObject
+  * @param {String} noteObject.content - 笔记内容
+  * @returns
+  */
   const handleNoteAdd = async (noteObject) => {
     try {
-      const returnedNote = await noteService.create(noteObject);
-      setNotes(notes.concat(returnedNote).sort(compare));
+      const date = new Date().toString();
+      const newNote = {
+        ...noteObject, id: uid, tags: ['未标记'], date,
+      };
+
+      // 快速显示新增内容
+      setNotes(notes.concat(newNote).sort(compare));
+
+      uid += 1;
       setVisible(false);
+
+      // 发送笔记内容到服务器
+      await noteService.create(noteObject);
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  const handleNoteUpdate = async (noteObject) => {
+  /**
+  * @param {Object} updatedNote
+  * @param {String} updateNote.content
+  */
+  const handleNoteUpdate = async (updatedNote) => {
     try {
       setVisible(false);
-      const updatedNote = await noteService.update(currentId, noteObject);
-      setNotes(notes.map((note) => (note.id === currentId ? updatedNote : note)));
+      // 目前只能更新内容
+      setNotes(notes.map((note) => (
+        note.id === currentId
+          ? { ...note, content: updatedNote.content }
+          : note
+      )));
+      await noteService.update(currentId, updatedNote);
     } catch (error) {
       console.log(error.message);
     }
@@ -91,8 +115,8 @@ function NotesPage() {
     const changedNote = { ...oldNote, tags };
 
     try {
-      const updatedNote = await noteService.update(id, changedNote);
-      setNotes(notes.map((note) => (note.id !== id ? note : updatedNote)));
+      setNotes(notes.map((note) => (note.id !== id ? note : changedNote)));
+      await noteService.update(id, changedNote);
     } catch (error) {
       console.log(error.message);
     }
