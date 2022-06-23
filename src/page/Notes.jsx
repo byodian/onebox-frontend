@@ -1,7 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  Button,
+  Spinner,
+  useDisclosure,
+} from '@chakra-ui/react';
 import Header from '../components/NoteHeader';
-import Modal from '../components/Modal';
+// import Modal from '../components/Modal';
 import FloatButton from '../components/ButtonFloat';
 import NoteItem from '../components/NoteItem';
 import NoteItemIcon from '../components/NoteItemIcon';
@@ -13,11 +31,15 @@ import { useAuth } from '../hooks';
 import { compare } from '../utils';
 import noteService from '../api/note';
 
-let uid = 0;
+// let uid = 0;
 function NotesPage() {
   const [visible, setVisible] = useState(false);
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isEditorOpen, onOpen: onEditorOpen, onClose: onEditorClose } = useDisclosure();
+  const cancelRef = useRef();
   const navigate = useNavigate();
   const auth = useAuth();
 
@@ -27,6 +49,7 @@ function NotesPage() {
         noteService.setToken(auth.token);
         const initialNotes = await noteService.getNotesByUser(auth.user);
         setNotes(initialNotes);
+        setIsLoading(false);
       } catch (error) {
         console.error(error.message);
       }
@@ -35,7 +58,7 @@ function NotesPage() {
   }, [auth.token, auth.user]);
 
   const handleModelVisible = (id, type) => {
-    setVisible(!visible);
+    onEditorOpen();
 
     if (type === 'update') {
       setCurrentId(id);
@@ -52,19 +75,11 @@ function NotesPage() {
   */
   const handleNoteAdd = async (noteObject) => {
     try {
-      const date = new Date().toString();
-      const newNote = {
-        ...noteObject, id: uid, tags: ['未标记'], date,
-      };
-
-      // 快速显示新增内容
-      setNotes(notes.concat(newNote).sort(compare));
-
-      uid += 1;
+      // 关闭编辑器弹框 ovlerlay
       setVisible(false);
 
-      // 发送笔记内容到服务器
-      await noteService.create(noteObject);
+      const createdNote = await noteService.create(noteObject);
+      setNotes(notes.concat(createdNote).sort(compare));
     } catch (error) {
       console.log(error.message);
     }
@@ -101,22 +116,16 @@ function NotesPage() {
     }
   };
 
+  const handleDeleteOverlayOpen = (id) => {
+    setCurrentId(id);
+    onOpen();
+  };
+
   const handleNoteDelete = async (id) => {
     try {
       setNotes(notes.filter((n) => n.id !== id));
+      onClose();
       await noteService.remove(id);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const handleTagUpdate = async (id, tags) => {
-    const oldNote = notes.find((n) => n.id === id);
-    const changedNote = { ...oldNote, tags };
-
-    try {
-      setNotes(notes.map((note) => (note.id !== id ? note : changedNote)));
-      await noteService.update(id, changedNote);
     } catch (error) {
       console.log(error.message);
     }
@@ -124,6 +133,14 @@ function NotesPage() {
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="relative h-screen grid place-items-center">
+        <Spinner color="teal.500" />
+      </div>
+    );
   }
 
   return (
@@ -145,11 +162,9 @@ function NotesPage() {
               key={note.id}
             >
               <NoteItemIcon
-                tags={note.tags}
                 like={note.like}
                 toggleLike={() => handleStarToggle(note.id)}
-                deleteNote={() => handleNoteDelete(note.id)}
-                updateTag={(tags) => handleTagUpdate(note.id, tags)}
+                deleteNote={() => handleDeleteOverlayOpen(note.id)}
                 toggleVisible={() => handleModelVisible(note.id, 'update')}
                 goDetail={() => navigate(`/notes/${note.id}`)}
               />
@@ -157,14 +172,39 @@ function NotesPage() {
           ))}
         </ul>
       </Main>
-      <Modal
-        show={visible}
-        handleShow={() => setVisible(!visible)}
+      <AlertDialog
+        isOpen={isOpen}
+        onClose={onClose}
+        leastDestructiveRef={cancelRef}
+        isCentered
+        motionPreset="slideInBottom"
       >
-        <TextEditor
-          handleNoteSubmit={currentId ? handleNoteUpdate : handleNoteAdd}
-          initialContent={currentId ? notes.find((n) => n.id === currentId)?.content : ''}
-        />
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontWeight="bold">删除笔记</AlertDialogHeader>
+            <AlertDialogBody>
+              确定要删除这条笔记吗？
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>取消</Button>
+              <Button onClick={() => handleNoteDelete(currentId)} colorScheme="teal" ml={3}>确定</Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      <Modal onClose={onEditorClose} isOpen={isEditorOpen} size="4xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{currentId ? '编辑笔记' : '新增笔记'}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TextEditor
+              handleNoteSubmit={currentId ? handleNoteUpdate : handleNoteAdd}
+              initialContent={currentId ? notes.find((n) => n.id === currentId)?.content : ''}
+            />
+          </ModalBody>
+        </ModalContent>
       </Modal>
       <FloatButton handleClick={() => handleModelVisible(null, 'create')} />
     </div>

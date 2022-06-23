@@ -1,30 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-// import InputTag from './InputTag';
 import {
   DeleteIcon,
-  TagIcon,
   CreateIcon,
   StarBorderIcon,
   StarIcon,
   DetailIcon,
 } from './IconStyles';
 
-// import { useField } from '../hooks/';
-
 function NoteItemIcon({
-  tags, like, toggleLike, toggleVisible, deleteNote, updateTag, goDetail,
+  like, toggleLike, toggleVisible, deleteNote, goDetail,
 }) {
-  // const tagsState = useField('text', tags.join(','));
-  const [visibility, setVisibility] = useState(false);
-
   const IconGroup = [
-    {
-      id: 1,
-      element: <TagIcon />,
-      onClick: () => setVisibility(!visibility),
-      label: '开发中...',
-    },
     {
       id: 2,
       element: like ? <StarIcon /> : <StarBorderIcon />,
@@ -51,34 +38,22 @@ function NoteItemIcon({
     },
   ];
 
-  // const handleTagUpdate = () => {
-  //   updateTag(tagsState.value);
-  //   setVisibility(!visibility);
-  // };
-
   return (
-    <>
-      <div
-        className="flex ml-auto items-center gap-x-2"
-      >
-        {IconGroup.map((icon) => (
-          <button
-            className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]"
-            onClick={icon.onClick}
-            key={icon.id}
-            title={icon.label}
-            type="button"
-          >
-            {icon.element}
-          </button>
-        ))}
-      </div>
-
-      {/* {visibility */}
-      {/*   ? <InputTag tagsState={tagsState} handleTagsSubmit={handleTagUpdate} /> */}
-      {/*   : null */}
-      {/* } */}
-    </>
+    <div
+      className="flex ml-auto items-center gap-x-2"
+    >
+      {IconGroup.map((icon) => (
+        <button
+          className="flex justify-center items-center w-[28px] h-[28px] rounded-full cursor-pointer hover:text-[color:var(--highlight)] hover:bg-[color:var(--highlight-1)]"
+          onClick={icon.onClick}
+          key={icon.id}
+          title={icon.label}
+          type="button"
+        >
+          {icon.element}
+        </button>
+      ))}
+    </div>
   );
 }
 

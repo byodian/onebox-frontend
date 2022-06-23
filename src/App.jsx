@@ -13,7 +13,14 @@ function App() {
   return (
     <ChakraProvider>
       <Routes>
-        <Route path="/notes/:id" element={<NoteDetail />} />
+        <Route
+          path="/notes/:id"
+          element={(
+            <ProvideAuth>
+              <NoteDetail />
+            </ProvideAuth>
+          )}
+        />
         <Route
           path="/notes"
           element={(
