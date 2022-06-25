@@ -7,8 +7,10 @@ const authContext = createContext();
 const useAuth = () => useContext(authContext);
 
 function useProvidedAuth() {
-  const initialUser = JSON.parse(localStorage.getItem('user'));
-  const initialToken = JSON.parse(localStorage.getItem('token'));
+  const userItem = localStorage.getItem('user');
+  const tokenItem = localStorage.getItem('token');
+  const initialUser = userItem && JSON.parse(userItem);
+  const initialToken = tokenItem && JSON.parse(tokenItem);
 
   const [user, setUser] = useState(initialUser ?? null);
   const [token, setToken] = useState(initialToken ?? null);
