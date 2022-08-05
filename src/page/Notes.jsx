@@ -28,7 +28,7 @@ import Main from './AppStyles';
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 import { useAuth } from '../hooks';
 import { compare } from '../utils';
-import noteService from '../api/note';
+import { noteService } from '../services';
 
 // let uid = 0;
 function NotesPage() {

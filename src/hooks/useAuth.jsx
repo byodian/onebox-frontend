@@ -1,10 +1,6 @@
 import React, { useState, useContext, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService, userService } from '../api';
-
-const authContext = createContext();
-
-const useAuth = () => useContext(authContext);
+import { authService, userService } from '../services';
 
 function useProvidedAuth() {
   const userItem = localStorage.getItem('user');
@@ -54,10 +50,14 @@ function useProvidedAuth() {
   };
 }
 
+const authContext = createContext();
+
 export function ProvideAuth({ children }) {
   const auth = useProvidedAuth();
 
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
-export default useAuth;
+export function useAuth() {
+  return useContext(authContext);
+}

@@ -3,7 +3,7 @@ import parse from 'html-react-parser';
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react';
 import Main from './AppStyles';
-import noteService from '../api/note';
+import { noteService } from '../services';
 import { getLocalDate } from '../utils';
 import { useAuth } from '../hooks';
 
