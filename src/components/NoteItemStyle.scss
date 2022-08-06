@@ -1,0 +1,24 @@
+.note-item {
+  padding: 1rem;
+  border-color: rgb(229, 231, 235);
+  border-bottom-width: 1px;
+
+  &__buttons {
+    display: flex;
+    visibility: hidden;
+    margin-left: auto;
+    cursor: pointer;
+  }
+
+  &:hover {
+    background-color: rgb(249, 250, 251);
+
+    .note-item__buttons {
+      visibility: visible;
+    }
+  }
+
+  &:first-child {
+    border-top-width: 1px;
+  }
+}
