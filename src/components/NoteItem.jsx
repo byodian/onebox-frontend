@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import parse from 'html-react-parser';
+import Prism from 'prismjs';
 import { getLocalDate } from '../utils';
+import 'prismjs/themes/prism-tomorrow.css';
 
 function Note({ note, children }) {
+  useEffect(() => {
+    Prism.highlightAll();
+  });
+
   return (
     <li
       className="flex flex-col gap-y-4 py-4 px-6 border-b first:border-t border-b-gray-100 hover:bg-gray-50"
