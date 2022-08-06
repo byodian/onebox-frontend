@@ -41,7 +41,7 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Download build result for job 1
+      - name: Download build result
         uses: actions/download-artifact@v3
         with:
           name: build
@@ -49,8 +49,11 @@ jobs:
           
       - name: Copy build directory
         shell: bash
-        run: cp -r build/ /www/notes-frontend/build-test/
-        
+        run: |
+          rm -rf /www/notes-frontend/build-test/ /www/notes-frontend/build/
+          cp -r build/ /www/notes-frontend/build-test/
+          cp -r build/ /www/notes-frontend/
+
       - name: Delete artifacts
         shell: bash
         run: rm -rf /www/notes-frontend/actions-runner/_work/
