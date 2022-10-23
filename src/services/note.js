@@ -1,32 +1,43 @@
 import axios from 'axios';
 
-const baseUrl = '/api/notes';
+const baseUrl = '/notes';
 
 let token = null;
 
 const setToken = (newToken) => {
-  token = `bearer ${newToken}`;
+  token = newToken;
 };
 
 const getAll = async () => {
   const config = {
-    headers: { Authorization: token },
+    headers: { 'x-access-token': token },
   };
   const response = await axios.get(baseUrl, config);
   return response.data;
 };
 
-const getNotesByUser = async (username) => {
+const getNotes = async (type) => {
+  let url;
+
+  if (type === 'star') {
+    url = `${baseUrl}/star`;
+  } else if (type === 'today') {
+    url = `${baseUrl}/today`;
+  } else {
+    url = baseUrl;
+  }
+
   const config = {
-    headers: { Authorization: token },
+    headers: { 'x-access-token': token },
   };
-  const request = await axios.get(`/api/users/${username}`, config);
+
+  const request = await axios.get(url, config);
   return request.data;
 };
 
 const getById = async (id) => {
   const config = {
-    headers: { Authorization: token },
+    headers: { 'x-access-token': token },
   };
 
   const request = await axios.get(`${baseUrl}/${id}`, config);
@@ -35,7 +46,7 @@ const getById = async (id) => {
 
 const create = async (newObject) => {
   const config = {
-    headers: { Authorization: token },
+    headers: { 'x-access-token': token },
   };
 
   const response = await axios.post(baseUrl, newObject, config);
@@ -44,7 +55,7 @@ const create = async (newObject) => {
 
 const update = async (id, newObject) => {
   const config = {
-    headers: { Authorization: token },
+    headers: { 'x-access-token': token },
   };
 
   const response = await axios.put(`${baseUrl}/${id}`, newObject, config);
@@ -55,15 +66,42 @@ const update = async (id, newObject) => {
 const remove = async (id) => {
   const config = {
     headers: {
-      Authorization: token,
+      'x-access-token': token,
     },
   };
 
   await axios.delete(`${baseUrl}/${id}`, config);
 };
 
-const NoteService = {
-  getAll, getById, create, update, setToken, remove, getNotesByUser,
+export const noteService = {
+  getAll, getById, create, update, setToken, remove, getNotes,
 };
 
-export default NoteService;
+const getAllFolders = async () => {
+  const config = {
+    headers: { 'x-access-token': token },
+  };
+
+  const response = await axios.get('/folders', config);
+  return response.data;
+};
+
+const createFolder = async (newObject) => {
+  const config = {
+    headers: { 'x-access-token': token },
+  };
+
+  const response = await axios.post('/folders', newObject, config);
+  return response.data;
+};
+
+const findOneFolder = async (id) => {
+  const config = {
+    headers: { 'x-access-token': token },
+  };
+
+  const response = await axios.get(`/folders/${id}`, config);
+  return response.data;
+};
+
+export const folderService = { getAllFolders, createFolder, findOneFolder };

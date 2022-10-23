@@ -15,7 +15,7 @@ function Note({ note, children }) {
       className="note-item"
     >
       <div className="flex items-center mb-4">
-        <time className="block text-gray-400">{getLocalDate(note.date)}</time>
+        <time className="block text-gray-400">{getLocalDate(note.createdAt)}</time>
         <div className="note-item__buttons">
           {children}
         </div>

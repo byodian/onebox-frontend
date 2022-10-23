@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react';
-import Main from './AppStyles';
+import { Main } from './AppStyles';
 import { noteService } from '../services';
 import { getLocalDate } from '../utils';
 import { useAuth } from '../hooks';
@@ -37,7 +37,7 @@ function Note() {
         ) : (
           <div className="prose">
             <p>
-              <time className="block text-gray-400">{getLocalDate(note.date)}</time>
+              <time className="block text-gray-400">{getLocalDate(note.createdAt)}</time>
             </p>
             {parse(note.content)}
           </div>

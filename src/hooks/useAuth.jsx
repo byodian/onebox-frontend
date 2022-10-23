@@ -1,25 +1,28 @@
 import React, { useState, useContext, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService, userService } from '../services';
+import { userService } from '../services';
 
 function useProvidedAuth() {
-  const userItem = localStorage.getItem('user');
-  const tokenItem = localStorage.getItem('token');
-  const initialUser = userItem && JSON.parse(userItem);
-  const initialToken = tokenItem && JSON.parse(tokenItem);
+  const userItem = JSON.parse(localStorage.getItem('user'));
+  const tokenItem = JSON.parse(localStorage.getItem('token'));
+  const isLoggingIn = JSON.parse(localStorage.getItem('isLoggingIn')) ?? false;
 
-  const [user, setUser] = useState(initialUser ?? null);
-  const [token, setToken] = useState(initialToken ?? null);
+  const [user, setUser] = useState(userItem);
+  const [token, setToken] = useState(tokenItem);
+  const [isAuth, setIsAuth] = useState(isLoggingIn);
+
   const navigate = useNavigate();
 
   const login = async (userObject) => {
     try {
-      const { username, token: userToken } = await authService.login(userObject);
+      const { username, token: userToken } = await userService.login(userObject);
       localStorage.setItem('user', JSON.stringify(username));
       localStorage.setItem('token', JSON.stringify(userToken));
+      localStorage.setItem('isLoggingIn', true);
       setUser(username);
       setToken(userToken);
-      navigate('/notes');
+      setIsAuth(true);
+      navigate('/notes/all');
     } catch (error) {
       // handleMessage('用户名或密码不正确', 'error');
       console.log(error.message);
@@ -38,12 +41,14 @@ function useProvidedAuth() {
 
   const logout = () => {
     localStorage.clear();
+    setIsAuth(false);
     navigate('/');
   };
 
   return {
     user,
     token,
+    isAuth,
     login,
     register,
     logout,

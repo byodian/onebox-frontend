@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import {
+  Navigate, useNavigate, useParams,
+} from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -24,14 +26,15 @@ import NoteItem from '../components/NoteItem';
 import NoteItemIcon from '../components/NoteItemIcon';
 import DefaultComponent from '../components/DefaultEl';
 import TextEditor from '../components/TextEditor';
-import Main from './AppStyles';
+import { Main } from './AppStyles';
+import { AsideBlock } from '../components/Aside';
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 import { useAuth } from '../hooks';
 import { compare } from '../utils';
-import { noteService } from '../services';
+import { folderService, noteService } from '../services';
 
 // let uid = 0;
-function NotesPage() {
+function NotesPage({ pageType }) {
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -39,13 +42,22 @@ function NotesPage() {
   const { isOpen: isEditorOpen, onOpen: onEditorOpen, onClose: onEditorClose } = useDisclosure();
   const cancelRef = useRef();
   const navigate = useNavigate();
+
+  const params = useParams();
   const auth = useAuth();
 
   useEffect(() => {
     async function fetchNotes() {
       try {
         noteService.setToken(auth.token);
-        const initialNotes = await noteService.getNotesByUser(auth.user);
+        console.log(pageType);
+        let initialNotes;
+        if (pageType === 'folder') {
+          const folder = await folderService.findOneFolder(params.folderId);
+          initialNotes = folder.notes;
+        } else {
+          initialNotes = await noteService.getNotes(pageType);
+        }
         setNotes(initialNotes);
         setIsLoading(false);
       } catch (error) {
@@ -53,7 +65,7 @@ function NotesPage() {
       }
     }
     fetchNotes();
-  }, [auth.token, auth.user]);
+  }, [auth.token, auth.user, pageType, params.folderId]);
 
   const handleModelVisible = (id, type) => {
     onEditorOpen();
@@ -102,7 +114,7 @@ function NotesPage() {
 
   const handleStarToggle = async (id) => {
     const note = notes.find((item) => item.id === id);
-    const changedNote = { ...note, like: !note.like };
+    const changedNote = { ...note, star: !note.star };
 
     try {
       setNotes(notes.map((n) => (n.id !== id ? n : changedNote)));
@@ -140,9 +152,10 @@ function NotesPage() {
   }
 
   return (
-    <div className="relative">
-      <Header handleLogout={auth.logout} />
+    <div className="w-3/4 relative flex mx-auto h-full">
+      <AsideBlock token={auth.token} />
       <Main>
+        <Header handleLogout={auth.logout} />
         <TextEditor handleNoteSubmit={handleNoteAdd} />
         {
           notes.length === 0 && (
@@ -158,8 +171,8 @@ function NotesPage() {
               key={note.id}
             >
               <NoteItemIcon
-                like={note.like}
-                toggleLike={() => handleStarToggle(note.id)}
+                star={note.star}
+                toggleStar={() => handleStarToggle(note.id)}
                 deleteNote={() => handleDeleteOverlayOpen(note.id)}
                 toggleVisible={() => handleModelVisible(note.id, 'update')}
                 goDetail={() => navigate(`/notes/${note.id}`)}

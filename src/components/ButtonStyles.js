@@ -38,7 +38,6 @@ export const TextButton = styled(Button)`
 export const HamburgerButton = styled.button`
   display: flex;
   border-radius: var(--radius-sm);
-  padding: var(--space-4); 
 
   &:hover {
     background-color: var(--color-gray-02);

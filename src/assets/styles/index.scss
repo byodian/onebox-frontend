@@ -1,5 +1,7 @@
 @import './abstracts/variables';
+@import './components/antdesign-reset.scss';
 @import './components/ckEditor';
+@import '~antd/dist/antd.css';
 
 @tailwind base;
 @tailwind components;
@@ -10,7 +12,13 @@ html {
 }
 
 body {
-  font-size: 1rem; 
+  font-size: 1rem;
+  height: 100vh;
+}
+
+#root {
+  height: 100%;
+  overflow-y: auto;
 }
 
 *,

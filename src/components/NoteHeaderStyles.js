@@ -18,9 +18,7 @@ export const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   height: var(--space-48);
-  padding-left: var(--space-16);
-  padding-right: var(--space-16);
-  border-bottom: 1px solid var(--main-color);
+  border-bottom: 1px solid var(--color-gray-04);
   border-top: 1px solid transparent;
 `;
 

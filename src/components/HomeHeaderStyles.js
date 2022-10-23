@@ -67,6 +67,6 @@ export const NavLink = styled(Link)`
   }
 `;
 
-export const NavRegisterLink = styled(NavLink)`
+export const NavLinkHighlight = styled(NavLink)`
   color: var(--highlight);
 `;

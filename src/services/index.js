@@ -1,3 +1,2 @@
-export { default as authService } from './login';
-export { default as noteService } from './note';
+export { noteService, folderService } from './note';
 export { default as userService } from './user';

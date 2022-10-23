@@ -9,13 +9,13 @@ import {
 } from './IconStyles';
 
 function NoteItemIcon({
-  like, toggleLike, toggleVisible, deleteNote, goDetail,
+  star, toggleStar, toggleVisible, deleteNote, goDetail,
 }) {
   const IconGroup = [
     {
       id: 2,
-      element: like ? <StarIcon /> : <StarBorderIcon />,
-      onClick: toggleLike,
+      element: star ? <StarIcon /> : <StarBorderIcon />,
+      onClick: toggleStar,
       label: '星标',
     },
     {

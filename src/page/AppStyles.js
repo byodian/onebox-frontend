@@ -1,12 +1,9 @@
 import styled from '@emotion/styled';
 
-const Main = styled.main`
-  padding: var(--space-32) var(--space-16);
-
+// eslint-disable-next-line import/prefer-default-export
+export const Main = styled.main`
   @media screen and (min-width: 768px) {
-    max-width: 800px;
-    margin: 0 auto;
+    width: 650px;
+    min-width: 500px;
   }
 `;
-
-export default Main;
