@@ -1,7 +1,7 @@
 import React from 'react';
-import SvgWrapper from './DefaultElStyles';
+import SvgWrapper from './EmptyPageStyles';
 
-function DefaultComponent({ icon, text }) {
+function EmptyPage({ icon, text }) {
   return (
     <div className="flex flex-col justify-center items-center h-[55vh]">
       <SvgWrapper>
@@ -12,4 +12,4 @@ function DefaultComponent({ icon, text }) {
   );
 }
 
-export default DefaultComponent;
+export default EmptyPage;

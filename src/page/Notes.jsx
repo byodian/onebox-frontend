@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Navigate, useNavigate, useParams,
-} from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -19,21 +17,22 @@ import {
   Spinner,
   useDisclosure,
 } from '@chakra-ui/react';
-import Header from '../components/NoteHeader';
-// import Modal from '../components/Modal';
-import FloatButton from '../components/ButtonFloat';
-import NoteItem from '../components/NoteItem';
-import NoteItemIcon from '../components/NoteItemIcon';
-import DefaultComponent from '../components/DefaultEl';
-import TextEditor from '../components/TextEditor';
-import { Main } from './AppStyles';
-import { AsideBlock } from '../components/Aside';
+
+import {
+  NotesHeader,
+  NoteItem,
+  NoteItemIcon,
+  ButtonFloat,
+  EmptyPage,
+  TextEditor,
+  AsideBlock,
+} from '../components';
+
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 import { useAuth } from '../hooks';
 import { compare } from '../utils';
 import { folderService, noteService } from '../services';
 
-// let uid = 0;
 function NotesPage({ pageType }) {
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
@@ -42,7 +41,6 @@ function NotesPage({ pageType }) {
   const { isOpen: isEditorOpen, onOpen: onEditorOpen, onClose: onEditorClose } = useDisclosure();
   const cancelRef = useRef();
   const navigate = useNavigate();
-
   const params = useParams();
   const auth = useAuth();
 
@@ -152,15 +150,15 @@ function NotesPage({ pageType }) {
   }
 
   return (
-    <div className="w-3/4 relative flex mx-auto h-full">
+    <div className="md:w-4/5 lg:w-2/3 2xl:w-1/2 relative flex mx-auto h-full max-sm:px-4">
       <AsideBlock token={auth.token} />
-      <Main>
-        <Header handleLogout={auth.logout} />
+      <main className="flex-grow">
+        <NotesHeader handleLogout={auth.logout} />
         <TextEditor handleNoteSubmit={handleNoteAdd} />
         {
           notes.length === 0 && (
             <div>
-              <DefaultComponent icon={<DefaultHomeSvg />} text="写点什么吧？" />
+              <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
             </div>
           )
         }
@@ -180,7 +178,7 @@ function NotesPage({ pageType }) {
             </NoteItem>
           ))}
         </ul>
-      </Main>
+      </main>
       <AlertDialog
         isOpen={isOpen}
         onClose={onClose}
@@ -215,7 +213,7 @@ function NotesPage({ pageType }) {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <FloatButton handleClick={() => handleModelVisible(null, 'create')} />
+      <ButtonFloat handleClick={() => handleModelVisible(null, 'create')} />
     </div>
   );
 }

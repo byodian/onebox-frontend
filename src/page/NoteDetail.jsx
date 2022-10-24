@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react';
-import { Main } from './AppStyles';
 import { noteService } from '../services';
 import { getLocalDate } from '../utils';
 import { useAuth } from '../hooks';
@@ -30,7 +29,7 @@ function Note() {
   }, [params.id]);
 
   return (
-    <Main>
+    <main>
       {isLoading
         ? (
           <Spinner color="teal.500" />
@@ -42,7 +41,7 @@ function Note() {
             {parse(note.content)}
           </div>
         )}
-    </Main>
+    </main>
 
   );
 }

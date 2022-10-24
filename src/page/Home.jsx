@@ -11,6 +11,7 @@ import Feature1 from '../assets/svg/feature_1.svg';
 import Feature2 from '../assets/svg/feature_2.svg';
 import Feature3 from '../assets/svg/feature_3.svg';
 import FooterImgage from '../assets/svg/footer_1.svg';
+import { useAuth } from '../hooks';
 
 import {
   Container,
@@ -24,9 +25,11 @@ import {
 } from './HomeStyles';
 
 function Home() {
+  const auth = useAuth();
+
   return (
     <>
-      <Header />
+      <Header isAuth={auth.isAuth} />
       <main>
         <Container>
           <HeroSection>

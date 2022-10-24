@@ -19,8 +19,7 @@ const asideLinks = [
   { url: '/notes/today', name: '今日', icon: <CalendarIcon /> },
 ];
 
-// eslint-disable-next-line import/prefer-default-export
-export function AsideBlock({ token }) {
+export default function AsideBlock({ token }) {
   const [value, setValue] = useState('');
   const [visible, setVisible] = useState(false);
   const [folders, setFolders] = useState([]);
