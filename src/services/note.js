@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = '/notes';
+const baseUrl = '/api/notes';
 
 let token = null;
 
@@ -82,7 +82,7 @@ const getAllFolders = async () => {
     headers: { 'x-access-token': token },
   };
 
-  const response = await axios.get('/folders', config);
+  const response = await axios.get('/api/folders', config);
   return response.data;
 };
 
@@ -91,7 +91,7 @@ const createFolder = async (newObject) => {
     headers: { 'x-access-token': token },
   };
 
-  const response = await axios.post('/folders', newObject, config);
+  const response = await axios.post('/api/folders', newObject, config);
   return response.data;
 };
 
@@ -100,7 +100,7 @@ const findOneFolder = async (id) => {
     headers: { 'x-access-token': token },
   };
 
-  const response = await axios.get(`/folders/${id}`, config);
+  const response = await axios.get(`/api/folders/${id}`, config);
   return response.data;
 };
 
