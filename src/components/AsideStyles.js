@@ -5,11 +5,13 @@ import {
 } from 'react-icons/bs';
 
 export const Aside = styled.aside`
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
   min-width: 250px;
   height: 100%;
+  overflow-y: hidden;
   padding-top: 20px;
-  padding-right: 20px;
   margin-right: 2rem;
   border-right: 1px solid var(--color-gray-04);
 `;

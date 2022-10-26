@@ -77,7 +77,7 @@ export default function AsideBlock({ token }) {
         ))}
       </div>
 
-      <div>
+      <div className="overflow-y-auto pr-8">
         <Collapse bordered={false} expandIconPosition="end" onChange={onChange} className="select-none">
           <Panel header="收藏夹" extra={getExtra()}>
             <div className="flex flex-col gap-4 w-full">

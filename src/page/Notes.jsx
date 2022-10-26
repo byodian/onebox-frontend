@@ -152,7 +152,7 @@ function NotesPage({ pageType }) {
   return (
     <div className="md:w-4/5 lg:w-2/3 2xl:w-1/2 relative flex mx-auto h-full max-sm:px-4">
       <AsideBlock token={auth.token} />
-      <main className="flex-grow">
+      <main className="flex-grow h-screen overflow-y-auto pr-6">
         <NotesHeader handleLogout={auth.logout} />
         <TextEditor handleNoteSubmit={handleNoteAdd} />
         {

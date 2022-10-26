@@ -6,7 +6,6 @@ import Footer from '../components/Footer';
 import { Button } from '../components/ButtonStyles';
 
 import Hero from '../assets/svg/hero.svg';
-import Placeholder from '../assets/svg/placeholder.png';
 import Feature1 from '../assets/svg/feature_1.svg';
 import Feature2 from '../assets/svg/feature_2.svg';
 import Feature3 from '../assets/svg/feature_3.svg';
@@ -29,7 +28,7 @@ function Home() {
 
   return (
     <>
-      <Header isAuth={auth.isAuth} />
+      <Header isAuth={auth?.isAuth} />
       <main>
         <Container>
           <HeroSection>
@@ -40,7 +39,6 @@ function Home() {
             </HeroWrapper>
             <div>
               <img src={Hero} alt="使用 onebox 想记就记" />
-              <img className="placeholder-img" src={Placeholder} alt="使用 onebox 想记就记" />
             </div>
           </HeroSection>
         </Container>
