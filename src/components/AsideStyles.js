@@ -14,6 +14,10 @@ export const Aside = styled.aside`
   padding-top: 20px;
   margin-right: 2rem;
   border-right: 1px solid var(--color-gray-04);
+
+  @media only screen and (max-width: 640px) {
+    display: none;
+  }
 `;
 
 export const AsideNavLink = styled(NavLink)`

@@ -16,6 +16,7 @@ import {
   Button,
   Spinner,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 
 import {
@@ -43,12 +44,12 @@ function NotesPage({ pageType }) {
   const navigate = useNavigate();
   const params = useParams();
   const auth = useAuth();
+  const toast = useToast();
 
   useEffect(() => {
     async function fetchNotes() {
       try {
         noteService.setToken(auth.token);
-        console.log(pageType);
         let initialNotes;
         if (pageType === 'folder') {
           const folder = await folderService.findOneFolder(params.folderId);
@@ -60,6 +61,7 @@ function NotesPage({ pageType }) {
         setIsLoading(false);
       } catch (error) {
         console.error(error.message);
+        setIsLoading(false);
       }
     }
     fetchNotes();
@@ -75,6 +77,15 @@ function NotesPage({ pageType }) {
     }
   };
 
+  const handleError = (error) => {
+    toast({
+      title: error.message,
+      position: 'top',
+      status: 'error',
+      duration: 3000,
+    });
+  };
+
   /**
   * 目前只能新增笔记内容
   * @param {Object} noteObject
@@ -87,7 +98,7 @@ function NotesPage({ pageType }) {
       const createdNote = await noteService.create(noteObject);
       setNotes(notes.concat(createdNote).sort(compare));
     } catch (error) {
-      console.log(error.message);
+      handleError(error);
     }
   };
 
@@ -106,7 +117,7 @@ function NotesPage({ pageType }) {
       )));
       await noteService.update(currentId, updatedNote);
     } catch (error) {
-      console.log(error.message);
+      handleError(error);
     }
   };
 
@@ -118,7 +129,7 @@ function NotesPage({ pageType }) {
       setNotes(notes.map((n) => (n.id !== id ? n : changedNote)));
       await noteService.update(id, changedNote);
     } catch (error) {
-      console.log(error.message);
+      handleError(error);
     }
   };
 
@@ -133,7 +144,7 @@ function NotesPage({ pageType }) {
       onClose();
       await noteService.remove(id);
     } catch (error) {
-      console.log(error.message);
+      handleError(error);
     }
   };
 
@@ -150,9 +161,9 @@ function NotesPage({ pageType }) {
   }
 
   return (
-    <div className="md:w-4/5 lg:w-2/3 2xl:w-1/2 relative flex mx-auto h-full max-sm:px-4">
+    <div className="md:w-4/5 lg:w-2/3 2xl:w-1/2 relative flex mx-auto h-screen">
       <AsideBlock token={auth.token} />
-      <main className="flex-grow h-screen overflow-y-auto pr-6">
+      <main className="flex-grow h-screen overflow-y-auto px-6">
         <NotesHeader handleLogout={auth.logout} />
         <TextEditor handleNoteSubmit={handleNoteAdd} />
         {

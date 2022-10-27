@@ -1,5 +1,6 @@
 import React, { useState, useContext, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@chakra-ui/react';
 import { userService } from '../services';
 
 function useProvidedAuth() {
@@ -7,6 +8,7 @@ function useProvidedAuth() {
   const tokenItem = JSON.parse(localStorage.getItem('token'));
   const isLoggingIn = JSON.parse(localStorage.getItem('isLoggingIn')) ?? false;
 
+  const toast = useToast();
   const [user, setUser] = useState(userItem);
   const [token, setToken] = useState(tokenItem);
   const [isAuth, setIsAuth] = useState(isLoggingIn);
@@ -24,18 +26,32 @@ function useProvidedAuth() {
       setIsAuth(true);
       navigate('/notes/all');
     } catch (error) {
-      // handleMessage('用户名或密码不正确', 'error');
-      console.log(error.message);
+      toast({
+        title: error.message,
+        position: 'top',
+        status: 'error',
+        duration: 3000,
+      });
     }
   };
 
   const register = async (newUser) => {
     try {
       await userService.create(newUser);
+      toast({
+        title: '注册成功，请前往登陆',
+        position: 'top',
+        status: 'success',
+        duration: 3000,
+      });
       navigate('/login');
     } catch (error) {
-      // handleMessage('您输入的邮箱地址或用户名已被使用', 'error');
-      console.dir(error.message);
+      toast({
+        title: error.message,
+        position: 'top',
+        status: 'error',
+        duration: 3000,
+      });
     }
   };
 

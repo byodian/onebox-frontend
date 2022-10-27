@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { Button } from '@chakra-ui/react';
 import { Input, Label } from './InputStyles';
 import { useAuth } from '../hooks';
-import { LoginButton } from './ButtonStyles';
 
 import {
   ButtonWrap,
@@ -13,6 +13,7 @@ function AccountLoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassWord] = useState('');
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const auth = useAuth();
 
   const passwordType = visible ? 'text' : 'password';
@@ -21,11 +22,13 @@ function AccountLoginForm() {
     setVisible(!visible);
   };
 
-  const handleSubmit = () => {
-    auth.login({
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    await auth.login({
       email,
       password,
     });
+    setIsLoading(false);
   };
 
   return (
@@ -62,7 +65,15 @@ function AccountLoginForm() {
         </div>
       </div>
       <div className="mt-8">
-        <LoginButton id="login-button" type="button" onClick={handleSubmit}>登陆</LoginButton>
+        <Button
+          isLoading={isLoading}
+          loadingText="登陆中"
+          colorScheme="teal"
+          onClick={handleSubmit}
+          className="w-full"
+        >
+          登陆
+        </Button>
       </div>
     </form>
   );
