@@ -1,7 +1,14 @@
 import styled from '@emotion/styled';
 import { NavLink } from 'react-router-dom';
 import {
-  BsBox, BsStar, BsCalendar2Event, BsFolder2, BsPlusCircle,
+  BsBox,
+  BsStar,
+  BsCalendar2Event,
+  BsFolder2,
+  BsPlusCircle,
+  BsThreeDots,
+  BsTrash,
+  BsPencilSquare,
 } from 'react-icons/bs';
 
 export const Aside = styled.aside`
@@ -26,6 +33,28 @@ export const AsideNavLink = styled(NavLink)`
   column-gap: 14px;
   padding: 8px 12px;
   border-radius: 4px;
+
+  .edit-button {
+    display: none;
+    min-width: 20px;
+    height: 20px;
+    margin-left: auto;
+    color: var(--color-gray-06);
+
+    &:hover {
+      color: var(--highlight);
+    }
+  }
+ 
+  &:hover {
+    .save-notes {
+      display: none;
+    }
+
+    .edit-button {
+      display: block;
+    }
+  }
 
   &.active {
     background-color: var(--color-gray-01);
@@ -54,6 +83,21 @@ export const FolderIcon = styled(BsFolder2)`
 `;
 
 export const PlusIcon = styled(BsPlusCircle)`
+  width: 15px;
+  height: 15px;
+`;
+
+export const BsThreeDotsIcon = styled(BsThreeDots)`
   width: 20px;
   height: 20px;
+`;
+
+export const BsTrashIcon = styled(BsTrash)`
+  width: 15px;
+  height: 15px;
+`;
+
+export const BsPencilSquareIcon = styled(BsPencilSquare)`
+  width: 15px;
+  height: 15px;
 `;

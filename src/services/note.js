@@ -95,6 +95,14 @@ const createFolder = async (newObject) => {
   return response.data;
 };
 
+const deleteFolder = async (id) => {
+  const config = {
+    headers: { 'x-access-token': token },
+  };
+
+  await axios.delete(`/api/folders/${id}`, config);
+};
+
 const findOneFolder = async (id) => {
   const config = {
     headers: { 'x-access-token': token },
@@ -104,4 +112,15 @@ const findOneFolder = async (id) => {
   return response.data;
 };
 
-export const folderService = { getAllFolders, createFolder, findOneFolder };
+const updateFolder = async (id, newObject) => {
+  const config = {
+    headers: { 'x-access-token': token },
+  };
+
+  const response = await axios.put(`/api/folders/${id}`, newObject, config);
+  return response.data;
+};
+
+export const folderService = {
+  getAllFolders, createFolder, findOneFolder, deleteFolder, updateFolder,
+};
