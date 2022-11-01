@@ -10,19 +10,19 @@ function useProvidedAuth() {
 
   const toast = useToast();
   const [user, setUser] = useState(userItem);
-  const [token, setToken] = useState(tokenItem);
+  const [accessToken, setAccessToken] = useState(tokenItem);
   const [isAuth, setIsAuth] = useState(isLoggingIn);
 
   const navigate = useNavigate();
 
   const login = async (userObject) => {
     try {
-      const { username, token: userToken } = await userService.login(userObject);
-      localStorage.setItem('user', JSON.stringify(username));
-      localStorage.setItem('token', JSON.stringify(userToken));
+      const { user: currentUser, token } = await userService.login(userObject);
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      localStorage.setItem('token', JSON.stringify(token));
       localStorage.setItem('isLoggingIn', true);
-      setUser(username);
-      setToken(userToken);
+      setUser(currentUser);
+      setAccessToken(token);
       setIsAuth(true);
       navigate('/notes/all');
     } catch (error) {
@@ -63,7 +63,7 @@ function useProvidedAuth() {
 
   return {
     user,
-    token,
+    accessToken,
     isAuth,
     login,
     register,

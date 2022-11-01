@@ -11,7 +11,7 @@ function Note() {
   const [note, setNote] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const auth = useAuth();
-  noteService.setToken(auth.token);
+  noteService.setToken(auth.accessToken);
 
   useEffect(() => {
     const fetchNotes = async () => {

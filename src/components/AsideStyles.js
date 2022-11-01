@@ -18,8 +18,7 @@ export const Aside = styled.aside`
   min-width: 250px;
   height: 100%;
   overflow-y: hidden;
-  padding-top: 20px;
-  margin-right: 2rem;
+  padding: 20px;
   border-right: 1px solid var(--color-gray-04);
 
   @media only screen and (max-width: 640px) {

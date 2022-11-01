@@ -14,7 +14,7 @@ function NoteItemIcon({
   const IconGroup = [
     {
       id: 2,
-      element: star ? <StarIcon /> : <StarBorderIcon />,
+      element: star === 1 ? <StarIcon /> : <StarBorderIcon />,
       onClick: toggleStar,
       label: '星标',
     },

@@ -49,7 +49,7 @@ function NotesPage({ pageType }) {
   useEffect(() => {
     async function fetchNotes() {
       try {
-        noteService.setToken(auth.token);
+        noteService.setToken(auth.accessToken);
         let initialNotes;
         if (pageType === 'folder') {
           const folder = await folderService.findOneFolder(params.folderId);
@@ -65,7 +65,7 @@ function NotesPage({ pageType }) {
       }
     }
     fetchNotes();
-  }, [auth.token, auth.user, pageType, params.folderId]);
+  }, [auth.accessToken, auth.use, pageType, params.folderId]);
 
   const handleModelVisible = (id, type) => {
     onEditorOpen();
@@ -123,7 +123,7 @@ function NotesPage({ pageType }) {
 
   const handleStarToggle = async (id) => {
     const note = notes.find((item) => item.id === id);
-    const changedNote = { ...note, star: !note.star };
+    const changedNote = { ...note, star: note.star ? 0 : 1 };
 
     try {
       setNotes(notes.map((n) => (n.id !== id ? n : changedNote)));
@@ -161,34 +161,36 @@ function NotesPage({ pageType }) {
   }
 
   return (
-    <div className="md:w-4/5 lg:w-2/3 2xl:w-1/2 relative flex mx-auto h-screen">
-      <AsideBlock token={auth.token} />
-      <main className="flex-grow h-screen overflow-y-auto px-6">
-        <NotesHeader handleLogout={auth.logout} />
-        <TextEditor handleNoteSubmit={handleNoteAdd} />
-        {
-          notes.length === 0 && (
-            <div>
-              <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
-            </div>
-          )
-        }
-        <ul>
-          {notes.map((note) => (
-            <NoteItem
-              note={note}
-              key={note.id}
-            >
-              <NoteItemIcon
-                star={note.star}
-                toggleStar={() => handleStarToggle(note.id)}
-                deleteNote={() => handleDeleteOverlayOpen(note.id)}
-                toggleVisible={() => handleModelVisible(note.id, 'update')}
-                goDetail={() => navigate(`/notes/${note.id}`)}
-              />
-            </NoteItem>
-          ))}
-        </ul>
+    <div className="relative flex h-screen">
+      <AsideBlock token={auth.accessToken} />
+      <main className="flex-grow h-screen overflow-y-auto">
+        <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
+          <NotesHeader handleLogout={auth.logout} />
+          <TextEditor handleNoteSubmit={handleNoteAdd} />
+          {
+            notes.length === 0 && (
+              <div>
+                <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
+              </div>
+            )
+          }
+          <ul>
+            {notes.map((note) => (
+              <NoteItem
+                note={note}
+                key={note.id}
+              >
+                <NoteItemIcon
+                  star={note.star}
+                  toggleStar={() => handleStarToggle(note.id)}
+                  deleteNote={() => handleDeleteOverlayOpen(note.id)}
+                  toggleVisible={() => handleModelVisible(note.id, 'update')}
+                  goDetail={() => navigate(`/notes/${note.id}`)}
+                />
+              </NoteItem>
+            ))}
+          </ul>
+        </div>
       </main>
       <AlertDialog
         isOpen={isOpen}
