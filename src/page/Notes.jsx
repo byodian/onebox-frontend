@@ -46,6 +46,15 @@ function NotesPage({ pageType }) {
   const auth = useAuth();
   const toast = useToast();
 
+  const handleError = (error) => {
+    toast({
+      title: error.message,
+      position: 'top',
+      status: 'error',
+      duration: 3000,
+    });
+  };
+
   useEffect(() => {
     async function fetchNotes() {
       try {
@@ -75,15 +84,6 @@ function NotesPage({ pageType }) {
     } else {
       setCurrentId('');
     }
-  };
-
-  const handleError = (error) => {
-    toast({
-      title: error.message,
-      position: 'top',
-      status: 'error',
-      duration: 3000,
-    });
   };
 
   /**
