@@ -1,126 +1,52 @@
-import axios from 'axios';
+import Request from '../utils/request';
 
-const baseUrl = '/api/notes';
+const baseURL = '/notes';
 
-let token = null;
-
-const setToken = (newToken) => {
-  token = newToken;
-};
-
-const getAll = async () => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-  const response = await axios.get(baseUrl, config);
-  return response.data;
-};
-
-const getNotes = async (type) => {
+export function getNotes(type) {
   let url;
 
-  if (type === 'star') {
-    url = `${baseUrl}/star`;
-  } else if (type === 'today') {
-    url = `${baseUrl}/today`;
-  } else {
-    url = baseUrl;
+  switch (type) {
+    case 'star':
+      url = `${baseURL}/star`;
+      break;
+    case 'today':
+      url = `${baseURL}/today`;
+      break;
+    default:
+      url = `${baseURL}`;
   }
 
-  const config = {
-    headers: { 'x-access-token': token },
-  };
+  return Request({
+    url,
+    method: 'get',
+  });
+}
 
-  const request = await axios.get(url, config);
-  return request.data;
-};
+export function getSingleNoteApi(id) {
+  return Request({
+    url: `${baseURL}/${id}`,
+  });
+}
 
-const getById = async (id) => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
+export function createNoteApi(data) {
+  return Request({
+    url: baseURL,
+    method: 'post',
+    data,
+  });
+}
 
-  const request = await axios.get(`${baseUrl}/${id}`, config);
-  return request.data;
-};
+export function updateSingleNoteApi(id, data) {
+  return Request({
+    url: `${baseURL}/${id}`,
+    method: 'patch',
+    data,
+  });
+}
 
-const create = async (newObject) => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-
-  const response = await axios.post(baseUrl, newObject, config);
-  return response.data;
-};
-
-const update = async (id, newObject) => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-
-  const response = await axios.patch(`${baseUrl}/${id}`, newObject, config);
-
-  return response.data;
-};
-
-const remove = async (id) => {
-  const config = {
-    headers: {
-      'x-access-token': token,
-    },
-  };
-
-  await axios.delete(`${baseUrl}/${id}`, config);
-};
-
-export const noteService = {
-  getAll, getById, create, update, setToken, remove, getNotes,
-};
-
-const getAllFolders = async () => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-
-  const response = await axios.get('/api/folders', config);
-  return response.data;
-};
-
-const createFolder = async (newObject) => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-
-  const response = await axios.post('/api/folders', newObject, config);
-  return response.data;
-};
-
-const deleteFolder = async (id) => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-
-  await axios.delete(`/api/folders/${id}`, config);
-};
-
-const findOneFolder = async (id) => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-
-  const response = await axios.get(`/api/folders/${id}`, config);
-  return response.data;
-};
-
-const updateFolder = async (id, newObject) => {
-  const config = {
-    headers: { 'x-access-token': token },
-  };
-
-  const response = await axios.put(`/api/folders/${id}`, newObject, config);
-  return response.data;
-};
-
-export const folderService = {
-  getAllFolders, createFolder, findOneFolder, deleteFolder, updateFolder,
-};
+export function removeSingleNoteApi(id) {
+  return Request({
+    url: `${baseURL}/${id}`,
+    method: 'delete',
+  });
+}

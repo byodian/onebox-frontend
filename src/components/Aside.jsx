@@ -27,8 +27,10 @@ import {
   BsPencilSquareIcon,
 } from './AsideStyles';
 
-import { folderService, noteService } from '../services';
 import { useCustomToast, useField } from '../hooks';
+import {
+  createFolderApi, getAllFolders, removeSingleFolderApi, updateSingleFolderApi,
+} from '../services/folder';
 
 const { Panel } = Collapse;
 const asideLinks = [
@@ -37,7 +39,7 @@ const asideLinks = [
   { url: '/notes/today', name: '今日', icon: <CalendarIcon /> },
 ];
 
-export default function AsideBlock({ token }) {
+export default function AsideBlock() {
   const [visible, setVisible] = useState(false);
   const [folders, setFolders] = useState([]);
   const [currentFolderId, setCurrentFolderId] = useState('');
@@ -48,10 +50,8 @@ export default function AsideBlock({ token }) {
 
   useEffect(() => {
     async function fetchFolders() {
-      noteService.setToken(token);
-
       try {
-        const initialFolders = await folderService.getAllFolders();
+        const initialFolders = await getAllFolders();
         setFolders(initialFolders);
       } catch (err) {
         handleError(err);
@@ -59,21 +59,22 @@ export default function AsideBlock({ token }) {
     }
 
     fetchFolders();
-  }, [token]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (event) => {
     if (event.key === 'Enter') {
       let folder = null;
       try {
         if (currentFolderId) {
-          folder = await folderService.updateFolder(currentFolderId, {
+          folder = await updateSingleFolderApi(currentFolderId, {
             name: inputField.value,
           });
           setFolders(
             folders.map((item) => (item.id !== currentFolderId ? item : folder)),
           );
         } else {
-          folder = await folderService.createFolder({ name: inputField.value });
+          folder = await createFolderApi({ name: inputField.value });
           setFolders(folders.concat(folder));
         }
 
@@ -103,7 +104,7 @@ export default function AsideBlock({ token }) {
 
   const handleDelete = async () => {
     try {
-      await folderService.deleteFolder(currentFolderId);
+      await removeSingleFolderApi(currentFolderId);
       setFolders(folders.filter((item) => item.id !== currentFolderId));
       setCurrentFolderId('');
       setIsOpen(false);

@@ -1,20 +1,15 @@
-import axios from 'axios';
+import Request from '../utils/request';
 
-const baseUrl = '/api/users';
+const baseUrl = '/users';
 
-const login = async (credentials) => {
-  const response = await axios.post(`${baseUrl}/authenticate`, credentials);
-  return response.data;
-};
+export const loginApi = (data) => Request({
+  url: `${baseUrl}/authenticate`,
+  method: 'post',
+  data,
+});
 
-const create = async (newUser) => {
-  const user = await axios.post(baseUrl, newUser);
-  return user.data;
-};
-
-const userService = {
-  create,
-  login,
-};
-
-export default userService;
+export const createUserApi = (data) => Request({
+  url: `${baseUrl}`,
+  method: 'post',
+  data,
+});

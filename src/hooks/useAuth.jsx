@@ -1,26 +1,32 @@
 import React, { useState, useContext, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
-import { userService } from '../services';
+import { loginApi, createUserApi } from '../services/user';
+import {
+  getStorageUser,
+  getStorageLogIn,
+  getStorageToken,
+  generateStorageToken,
+  generateStorageUser,
+  generateStorageLogIn,
+  clearStorage,
+} from '../utils/auth';
 
 function useProvidedAuth() {
-  const userItem = JSON.parse(localStorage.getItem('user'));
-  const tokenItem = JSON.parse(localStorage.getItem('token'));
-  const isLoggingIn = JSON.parse(localStorage.getItem('isLoggingIn')) ?? false;
-
   const toast = useToast();
-  const [user, setUser] = useState(userItem);
-  const [accessToken, setAccessToken] = useState(tokenItem);
-  const [isAuth, setIsAuth] = useState(isLoggingIn);
-
+  const [user, setUser] = useState(getStorageUser());
+  const [accessToken, setAccessToken] = useState(getStorageToken());
+  const [isAuth, setIsAuth] = useState(getStorageLogIn() ?? false);
   const navigate = useNavigate();
 
   const login = async (userObject) => {
     try {
-      const { user: currentUser, token } = await userService.login(userObject);
-      localStorage.setItem('user', JSON.stringify(currentUser));
-      localStorage.setItem('token', JSON.stringify(token));
-      localStorage.setItem('isLoggingIn', true);
+      const { user: currentUser, token } = await loginApi(userObject);
+      // 缓存数据
+      generateStorageToken(token);
+      generateStorageLogIn(true);
+      generateStorageUser(currentUser);
+
       setUser(currentUser);
       setAccessToken(token);
       setIsAuth(true);
@@ -37,7 +43,7 @@ function useProvidedAuth() {
 
   const register = async (newUser) => {
     try {
-      await userService.create(newUser);
+      await createUserApi(newUser);
       toast({
         title: '注册成功，请前往登陆',
         position: 'top',
@@ -56,7 +62,7 @@ function useProvidedAuth() {
   };
 
   const logout = () => {
-    localStorage.clear();
+    clearStorage();
     setIsAuth(false);
     navigate('/');
   };

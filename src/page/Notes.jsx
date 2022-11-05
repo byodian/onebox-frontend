@@ -25,7 +25,10 @@ import {
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 import { useAuth, useCustomToast } from '../hooks';
 import { compare } from '../utils';
-import { folderService, noteService } from '../services';
+import {
+  createNoteApi, getNotes, removeSingleNoteApi, updateSingleNoteApi,
+} from '../services/note';
+import { getSingleFolderApi } from '../services/folder';
 
 export default function NotesPage({ pageType }) {
   const [notes, setNotes] = useState([]);
@@ -45,20 +48,18 @@ export default function NotesPage({ pageType }) {
   const params = useParams();
   const auth = useAuth();
   const paramsId = params.folderId;
-  const { accessToken } = auth;
 
   useEffect(() => {
     async function fetchNotes() {
       let initialNotes;
-      noteService.setToken(accessToken);
       setIsLoading(true);
 
       try {
         if (pageType === 'folder') {
-          const folder = await folderService.findOneFolder(paramsId);
+          const folder = await getSingleFolderApi(paramsId);
           initialNotes = folder.notes;
         } else {
-          initialNotes = await noteService.getNotes(pageType);
+          initialNotes = await getNotes(pageType);
         }
 
         setNotes(initialNotes);
@@ -69,7 +70,7 @@ export default function NotesPage({ pageType }) {
       setIsLoading(false);
     }
     fetchNotes();
-  }, [pageType, accessToken, paramsId]);
+  }, [pageType, paramsId]);
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;
@@ -94,7 +95,7 @@ export default function NotesPage({ pageType }) {
   const handleNoteAdd = async (noteObject) => {
     try {
       onEditorClose();
-      const createdNote = await noteService.create(noteObject);
+      const createdNote = await createNoteApi(noteObject);
       setNotes(notes.concat(createdNote).sort(compare));
     } catch (error) {
       handleError(error);
@@ -114,7 +115,7 @@ export default function NotesPage({ pageType }) {
           ? { ...note, content: updatedNote.content }
           : note)),
       );
-      await noteService.update(currentId, updatedNote);
+      await updateSingleNoteApi(currentId, updatedNote);
     } catch (error) {
       handleError(error);
     }
@@ -126,7 +127,7 @@ export default function NotesPage({ pageType }) {
 
     try {
       setNotes(notes.map((n) => (n.id !== id ? n : changedNote)));
-      await noteService.update(id, changedNote);
+      await updateSingleNoteApi(id, changedNote);
     } catch (error) {
       handleError(error);
     }
@@ -141,7 +142,7 @@ export default function NotesPage({ pageType }) {
     try {
       setNotes(notes.filter((n) => n.id !== id));
       setVisible(false);
-      await noteService.remove(id);
+      await removeSingleNoteApi(id);
     } catch (error) {
       handleError(error);
     }
@@ -165,7 +166,7 @@ export default function NotesPage({ pageType }) {
     </div>
   ) : (
     <div className="relative flex h-screen">
-      <AsideBlock token={auth.accessToken} />
+      <AsideBlock />
       <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
