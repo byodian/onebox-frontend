@@ -26,7 +26,10 @@ import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg'
 import { useAuth, useCustomToast } from '../hooks';
 import { compare } from '../utils';
 import {
-  createNoteApi, getNotes, removeSingleNoteApi, updateSingleNoteApi,
+  createNoteApi,
+  getNotesApi,
+  removeSingleNoteApi,
+  updateSingleNoteApi,
 } from '../services/note';
 import { getSingleFolderApi } from '../services/folder';
 
@@ -34,6 +37,7 @@ export default function NotesPage({ pageType }) {
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
   const [visible, setVisible] = useState(false);
 
   const {
@@ -50,28 +54,36 @@ export default function NotesPage({ pageType }) {
   const paramsId = params.folderId;
 
   useEffect(() => {
+    let didCancel = false;
+
     async function fetchNotes() {
       let initialNotes;
       setIsLoading(true);
+      setIsEmpty(false);
 
       try {
         if (pageType === 'folder') {
           const folder = await getSingleFolderApi(paramsId);
           initialNotes = folder.notes;
         } else {
-          initialNotes = await getNotes(pageType);
+          initialNotes = await getNotesApi(pageType);
         }
 
-        setNotes(initialNotes);
+        if (!didCancel) setNotes(initialNotes);
       } catch (error) {
         handleError(error);
       }
 
       setIsLoading(false);
+      if (initialNotes.length === 0) setIsEmpty(true);
     }
     fetchNotes();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      console.log('unmounted');
+      didCancel = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageType, paramsId]);
 
   if (!auth.user) {
@@ -162,23 +174,26 @@ export default function NotesPage({ pageType }) {
     </NoteItem>
   ));
 
-  return isLoading ? (
-    <div className="relative h-screen grid place-items-center">
-      <Spinner color="teal.500" />
+  const noteListContent = () => (isEmpty ? (
+    <div>
+      <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
     </div>
   ) : (
+    <ul>{noteItems}</ul>
+  ));
+
+  return (
     <div className="relative flex h-screen">
       <AsideBlock />
       <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
           <TextEditor handleNoteSubmit={handleNoteAdd} />
-          {notes.length === 0 && (
-            <div>
-              <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
+          {isLoading ? (
+            <div className="relative h-screen grid place-items-center">
+              <Spinner color="teal.500" />
             </div>
-          )}
-          <ul>{noteItems}</ul>
+          ) : noteListContent() }
         </div>
       </main>
 

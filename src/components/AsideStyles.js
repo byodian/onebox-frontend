@@ -28,8 +28,9 @@ export const Aside = styled.aside`
 
 export const AsideNavLink = styled(NavLink)`
   display: flex;
-  width: 100%;
   column-gap: 14px;
+  align-items: center;
+  width: 100%;
   padding: 8px 12px;
   border-radius: 4px;
 
@@ -62,23 +63,23 @@ export const AsideNavLink = styled(NavLink)`
 `;
 
 export const BoxIcon = styled(BsBox)`
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 `;
 
 export const StarIcon = styled(BsStar)`
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 `;
 
 export const CalendarIcon = styled(BsCalendar2Event)`
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 `;
 
 export const FolderIcon = styled(BsFolder2)`
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 `;
 
 export const PlusIcon = styled(BsPlusCircle)`
@@ -87,8 +88,8 @@ export const PlusIcon = styled(BsPlusCircle)`
 `;
 
 export const BsThreeDotsIcon = styled(BsThreeDots)`
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 `;
 
 export const BsTrashIcon = styled(BsTrash)`

@@ -2,7 +2,7 @@ import Request from '../utils/request';
 
 const baseURL = '/notes';
 
-export function getNotes(type) {
+export function getNotesApi(type) {
   let url;
 
   switch (type) {
