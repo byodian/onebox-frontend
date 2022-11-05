@@ -1,4 +1,3 @@
-import React from 'react';
 import SvgWrapper from './EmptyPageStyles';
 
 function EmptyPage({ icon, text }) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import { Input, Label } from './InputStyles';
 import { useAuth } from '../hooks';

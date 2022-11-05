@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react';

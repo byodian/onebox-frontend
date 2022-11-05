@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   Modal,
@@ -70,6 +70,8 @@ export default function NotesPage({ pageType }) {
       setIsLoading(false);
     }
     fetchNotes();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageType, paramsId]);
 
   if (!auth.user) {

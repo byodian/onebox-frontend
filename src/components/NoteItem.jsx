@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import parse from 'html-react-parser';
 import Prism from 'prismjs';
 import { getLocalDate } from '../utils';
