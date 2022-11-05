@@ -9,16 +9,11 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  Button,
-  useToast,
-  useDisclosure,
 } from '@chakra-ui/react';
+
+import { useNavigate } from 'react-router-dom';
+import AlertCustomDialog from './AlertCustomDialog';
+
 import {
   Aside,
   AsideNavLink,
@@ -31,7 +26,9 @@ import {
   BsThreeDotsIcon,
   BsPencilSquareIcon,
 } from './AsideStyles';
+
 import { folderService, noteService } from '../services';
+import { useCustomToast, useField } from '../hooks';
 
 const { Panel } = Collapse;
 const asideLinks = [
@@ -41,22 +38,23 @@ const asideLinks = [
 ];
 
 export default function AsideBlock({ token }) {
-  const [value, setValue] = useState('');
   const [visible, setVisible] = useState(false);
   const [folders, setFolders] = useState([]);
   const [currentFolderId, setCurrentFolderId] = useState('');
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef();
-  const toast = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+  const handleError = useCustomToast();
+  const inputField = useField();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchFolders() {
+      noteService.setToken(token);
+
       try {
-        noteService.setToken(token);
         const initialFolders = await folderService.getAllFolders();
         setFolders(initialFolders);
       } catch (err) {
-        console.error(err.message);
+        handleError(err);
       }
     }
 
@@ -68,29 +66,29 @@ export default function AsideBlock({ token }) {
       let folder = null;
       try {
         if (currentFolderId) {
-          folder = await folderService.updateFolder(currentFolderId, { name: value });
-          setFolders(folders.map((item) => (item.id !== currentFolderId ? item : folder)));
+          folder = await folderService.updateFolder(currentFolderId, {
+            name: inputField.value,
+          });
+          setFolders(
+            folders.map((item) => (item.id !== currentFolderId ? item : folder)),
+          );
         } else {
-          folder = await folderService.createFolder({ name: value });
+          folder = await folderService.createFolder({ name: inputField.value });
           setFolders(folders.concat(folder));
         }
 
-        setValue('');
+        inputField.reset();
         setVisible(false);
         setCurrentFolderId('');
       } catch (err) {
-        toast({
-          title: err.message,
-          icon: 'error',
-          duration: 3000,
-        });
+        handleError(err);
       }
     }
   };
 
   const onChange = () => {
     setVisible(false);
-    setValue('');
+    inputField.reset();
   };
 
   const handleEdit = (folderId) => {
@@ -100,7 +98,7 @@ export default function AsideBlock({ token }) {
 
   const handleModalOpen = (id) => {
     setCurrentFolderId(id);
-    onOpen();
+    setIsOpen(true);
   };
 
   const handleDelete = async () => {
@@ -108,13 +106,10 @@ export default function AsideBlock({ token }) {
       await folderService.deleteFolder(currentFolderId);
       setFolders(folders.filter((item) => item.id !== currentFolderId));
       setCurrentFolderId('');
-      onClose();
+      setIsOpen(false);
+      navigate('/notes/all');
     } catch (err) {
-      toast({
-        title: err.message,
-        icon: 'error',
-        duration: 3000,
-      });
+      handleError(err);
     }
   };
 
@@ -128,10 +123,45 @@ export default function AsideBlock({ token }) {
     />
   );
 
+  const folderItems = folders.map((folder) => (
+    <AsideNavLink to={`/folders/${folder.id}`} key={folder.id}>
+      <FolderIcon />
+      <span>{folder.name}</span>
+      <span className="ml-auto text-gray-400 save-notes">
+        {folder.notes ? folder.notes : ''}
+      </span>
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          aria-label="Options"
+          icon={<BsThreeDotsIcon />}
+          variant="unstyled"
+          className="edit-button"
+        />
+        <MenuList>
+          <MenuItem
+            icon={<BsPencilSquareIcon />}
+            color="gray"
+            onClick={() => handleEdit(folder.id)}
+          >
+            重命名
+          </MenuItem>
+          <MenuItem
+            icon={<BsTrashIcon />}
+            color="gray"
+            onClick={() => handleModalOpen(folder.id)}
+          >
+            删除
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    </AsideNavLink>
+  ));
+
   return (
     <Aside>
       <div className="flex flex-col gap-y-4 mb-8">
-        { asideLinks.map((link) => (
+        {asideLinks.map((link) => (
           <AsideNavLink to={link.url} key={link.name}>
             {link.icon}
             <span>{link.name}</span>
@@ -139,7 +169,7 @@ export default function AsideBlock({ token }) {
         ))}
       </div>
 
-      <div className="overflow-y-auto pr-8">
+      <div className="overflow-y-auto">
         <Collapse
           bordered={false}
           defaultActiveKey={['1']}
@@ -149,41 +179,15 @@ export default function AsideBlock({ token }) {
         >
           <Panel header="收藏夹" extra={getExtra()} key="1">
             <div className="flex flex-col gap-4 w-full">
-              { folders.map((folder) => (
-                <AsideNavLink to={`/folders/${folder.id}`} key={folder.id}>
-                  <FolderIcon />
-                  <span>{folder.name}</span>
-                  <span className="ml-auto text-gray-400 save-notes">
-                    {folder.notes ? folder.notes : ''}
-                  </span>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label="Options"
-                      icon={<BsThreeDotsIcon />}
-                      variant="unstyled"
-                      className="edit-button"
-                    />
-                    <MenuList>
-                      <MenuItem icon={<BsPencilSquareIcon />} color="gray" onClick={() => handleEdit(folder.id)}>
-                        重命名
-                      </MenuItem>
-                      <MenuItem icon={<BsTrashIcon />} color="gray" onClick={() => handleModalOpen(folder.id)}>
-                        删除
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                </AsideNavLink>
-              ))}
-
-              { visible && (
+              {folderItems}
+              {visible && (
                 <InputGroup>
                   <InputLeftElement pointerEvents="none" width="3rem">
                     <FolderIcon />
                   </InputLeftElement>
                   <Input
-                    value={value}
-                    onChange={(event) => setValue(event.target.value)}
+                    value={inputField.value}
+                    onChange={(event) => inputField.onChange(event)}
                     onKeyDown={handleSubmit}
                     autoFocus
                     pl="3rem"
@@ -194,33 +198,13 @@ export default function AsideBlock({ token }) {
           </Panel>
         </Collapse>
       </div>
-      <AlertDialog
+
+      <AlertCustomDialog
         isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-        isCentered
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              删除文件夹
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              此文件夹里面的笔记不会被删除
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                取消
-              </Button>
-              <Button colorScheme="red" onClick={handleDelete} ml={3}>
-                删除
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+        handleConfirm={handleDelete}
+        handleClose={() => setIsOpen(false)}
+        message={{ headerText: '删除文件夹', bodyText: '此文件夹里面的笔记不会被删除' }}
+      />
     </Aside>
   );
 }

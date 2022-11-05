@@ -1,22 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogContent,
-  AlertDialogOverlay,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  Button,
   Spinner,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 
 import {
@@ -27,56 +19,63 @@ import {
   EmptyPage,
   TextEditor,
   AsideBlock,
+  AlertCustomDialog,
 } from '../components';
 
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
-import { useAuth } from '../hooks';
+import { useAuth, useCustomToast } from '../hooks';
 import { compare } from '../utils';
 import { folderService, noteService } from '../services';
 
-function NotesPage({ pageType }) {
+export default function NotesPage({ pageType }) {
   const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isEditorOpen, onOpen: onEditorOpen, onClose: onEditorClose } = useDisclosure();
-  const cancelRef = useRef();
+  const [visible, setVisible] = useState(false);
+
+  const {
+    isOpen: isEditorOpen,
+    onOpen: onEditorOpen,
+    onClose: onEditorClose,
+  } = useDisclosure();
+
+  const handleError = useCustomToast();
+
   const navigate = useNavigate();
   const params = useParams();
   const auth = useAuth();
-  const toast = useToast();
-
-  const handleError = (error) => {
-    toast({
-      title: error.message,
-      position: 'top',
-      status: 'error',
-      duration: 3000,
-    });
-  };
+  const paramsId = params.folderId;
+  const { accessToken } = auth;
 
   useEffect(() => {
     async function fetchNotes() {
+      let initialNotes;
+      noteService.setToken(accessToken);
+      setIsLoading(true);
+
       try {
-        noteService.setToken(auth.accessToken);
-        let initialNotes;
         if (pageType === 'folder') {
-          const folder = await folderService.findOneFolder(params.folderId);
+          const folder = await folderService.findOneFolder(paramsId);
           initialNotes = folder.notes;
         } else {
           initialNotes = await noteService.getNotes(pageType);
         }
+
         setNotes(initialNotes);
-        setIsLoading(false);
       } catch (error) {
-        console.error(error.message);
-        setIsLoading(false);
+        handleError(error);
       }
+
+      setIsLoading(false);
     }
     fetchNotes();
-  }, [auth.accessToken, auth.use, pageType, params.folderId]);
+  }, [pageType, accessToken, paramsId]);
 
-  const handleModelVisible = (id, type) => {
+  if (!auth.user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  function handleModelVisible(id, type) {
     onEditorOpen();
 
     if (type === 'update') {
@@ -84,14 +83,14 @@ function NotesPage({ pageType }) {
     } else {
       setCurrentId('');
     }
-  };
+  }
 
   /**
-  * 目前只能新增笔记内容
-  * @param {Object} noteObject
-  * @param {String} noteObject.content - 笔记内容
-  * @returns
-  */
+   * 目前只能新增笔记内容
+   * @param {Object} noteObject
+   * @param {String} noteObject.content - 笔记内容
+   * @returns
+   */
   const handleNoteAdd = async (noteObject) => {
     try {
       onEditorClose();
@@ -103,25 +102,25 @@ function NotesPage({ pageType }) {
   };
 
   /**
-  * @param {Object} updatedNote
-  * @param {String} updateNote.content
-  */
-  const handleNoteUpdate = async (updatedNote) => {
+   * @param {Object} updatedNote
+   * @param {String} updateNote.content
+   */
+  async function handleNoteUpdate(updatedNote) {
     try {
       onEditorClose();
       // 目前只能更新内容
-      setNotes(notes.map((note) => (
-        note.id === currentId
+      setNotes(
+        notes.map((note) => (note.id === currentId
           ? { ...note, content: updatedNote.content }
-          : note
-      )));
+          : note)),
+      );
       await noteService.update(currentId, updatedNote);
     } catch (error) {
       handleError(error);
     }
-  };
+  }
 
-  const handleStarToggle = async (id) => {
+  async function handleStarToggle(id) {
     const note = notes.find((item) => item.id === id);
     const changedNote = { ...note, star: note.star ? 0 : 1 };
 
@@ -131,87 +130,61 @@ function NotesPage({ pageType }) {
     } catch (error) {
       handleError(error);
     }
-  };
+  }
 
-  const handleDeleteOverlayOpen = (id) => {
+  function handleDeleteOverlayOpen(id) {
     setCurrentId(id);
-    onOpen();
-  };
+    setVisible(true);
+  }
 
-  const handleNoteDelete = async (id) => {
+  async function handleNoteDelete(id) {
     try {
       setNotes(notes.filter((n) => n.id !== id));
-      onClose();
+      setVisible(false);
       await noteService.remove(id);
     } catch (error) {
       handleError(error);
     }
-  };
-
-  if (!auth.user) {
-    return <Navigate to="/login" replace />;
   }
 
-  if (isLoading) {
-    return (
-      <div className="relative h-screen grid place-items-center">
-        <Spinner color="teal.500" />
-      </div>
-    );
-  }
+  const noteItems = notes.map((note) => (
+    <NoteItem note={note} key={note.id}>
+      <NoteItemIcon
+        star={note.star}
+        toggleStar={() => handleStarToggle(note.id)}
+        deleteNote={() => handleDeleteOverlayOpen(note.id)}
+        toggleVisible={() => handleModelVisible(note.id, 'update')}
+        goDetail={() => navigate(`/notes/${note.id}`)}
+      />
+    </NoteItem>
+  ));
 
-  return (
+  return isLoading ? (
+    <div className="relative h-screen grid place-items-center">
+      <Spinner color="teal.500" />
+    </div>
+  ) : (
     <div className="relative flex h-screen">
       <AsideBlock token={auth.accessToken} />
       <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
           <TextEditor handleNoteSubmit={handleNoteAdd} />
-          {
-            notes.length === 0 && (
-              <div>
-                <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
-              </div>
-            )
-          }
-          <ul>
-            {notes.map((note) => (
-              <NoteItem
-                note={note}
-                key={note.id}
-              >
-                <NoteItemIcon
-                  star={note.star}
-                  toggleStar={() => handleStarToggle(note.id)}
-                  deleteNote={() => handleDeleteOverlayOpen(note.id)}
-                  toggleVisible={() => handleModelVisible(note.id, 'update')}
-                  goDetail={() => navigate(`/notes/${note.id}`)}
-                />
-              </NoteItem>
-            ))}
-          </ul>
+          {notes.length === 0 && (
+            <div>
+              <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
+            </div>
+          )}
+          <ul>{noteItems}</ul>
         </div>
       </main>
-      <AlertDialog
-        isOpen={isOpen}
-        onClose={onClose}
-        leastDestructiveRef={cancelRef}
-        isCentered
-        motionPreset="slideInBottom"
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontWeight="bold">删除笔记</AlertDialogHeader>
-            <AlertDialogBody>
-              确定要删除这条笔记吗？
-            </AlertDialogBody>
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>取消</Button>
-              <Button onClick={() => handleNoteDelete(currentId)} colorScheme="teal" ml={3}>确定</Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+
+      <AlertCustomDialog
+        handleConfirm={() => handleNoteDelete(currentId)}
+        handleClose={() => setVisible(false)}
+        isOpen={visible}
+        message={{ headerText: '删除笔记', bodyText: '确定删除这条笔记吗？' }}
+      />
 
       <Modal onClose={onEditorClose} isOpen={isEditorOpen} size="4xl">
         <ModalOverlay />
@@ -221,7 +194,9 @@ function NotesPage({ pageType }) {
           <ModalBody>
             <TextEditor
               handleNoteSubmit={currentId ? handleNoteUpdate : handleNoteAdd}
-              initialContent={currentId ? notes.find((n) => n.id === currentId)?.content : ''}
+              initialContent={
+                currentId ? notes.find((n) => n.id === currentId)?.content : ''
+              }
             />
           </ModalBody>
         </ModalContent>
@@ -230,5 +205,3 @@ function NotesPage({ pageType }) {
     </div>
   );
 }
-
-export default NotesPage;
