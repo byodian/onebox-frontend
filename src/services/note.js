@@ -2,7 +2,7 @@ import Request from '../utils/request';
 
 const baseURL = '/notes';
 
-export function getNotesApi(type) {
+export function getNotesApi(type, params = {}) {
   let url;
 
   switch (type) {
@@ -19,6 +19,7 @@ export function getNotesApi(type) {
   return Request({
     url,
     method: 'get',
+    params,
   });
 }
 

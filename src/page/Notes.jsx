@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useRef } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   Modal,
@@ -21,77 +21,60 @@ import {
   AsideBlock,
   AlertCustomDialog,
 } from '../components';
-
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
-import { useAuth, useCustomToast } from '../hooks';
+
 import { compare } from '../utils';
-import {
-  createNoteApi,
-  getNotesApi,
-  removeSingleNoteApi,
-  updateSingleNoteApi,
-} from '../services/note';
-import { getSingleFolderApi } from '../services/folder';
+import { useAuth, useCustomToast, useFetch } from '../hooks';
+import { createNoteApi, removeSingleNoteApi, updateSingleNoteApi } from '../services/note';
 
 export default function NotesPage({ pageType }) {
-  const [notes, setNotes] = useState([]);
   const [currentId, setCurrentId] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEmpty, setIsEmpty] = useState(false);
+  // const [current, setCurrent] = useState(0);
   const [visible, setVisible] = useState(false);
 
-  const {
-    isOpen: isEditorOpen,
-    onOpen: onEditorOpen,
-    onClose: onEditorClose,
-  } = useDisclosure();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const handleError = useCustomToast();
-
   const navigate = useNavigate();
   const params = useParams();
   const auth = useAuth();
   const paramsId = params.folderId;
 
-  useEffect(() => {
-    let didCancel = false;
+  const [{ notes, isLoading, isEmpty }, setNotes] = useFetch({ pageType, paramsId, current: 0 });
 
-    async function fetchNotes() {
-      let initialNotes;
-      setIsLoading(true);
-      setIsEmpty(false);
+  const mainRef = useRef(null);
+  const target = useRef(null);
+  // const pageY = useRef(0); // Storing the last intersection y position
 
-      try {
-        if (pageType === 'folder') {
-          const folder = await getSingleFolderApi(paramsId);
-          initialNotes = folder.notes;
-        } else {
-          initialNotes = await getNotesApi(pageType);
-        }
+  // const handleObserve = useCallback((entries) => {
+  //   const { isIntersecting } = entries[0];
+  //   const { y } = entries[0].boundingClientRect;
 
-        if (!didCancel) setNotes(initialNotes);
-      } catch (error) {
-        handleError(error);
-      }
+  //   if (isIntersecting && pageY.current > y) {
+  //     console.log(entries[0]);
+  //     console.log(y);
+  //     setCurrent((prev) => prev + 1);
+  //   }
 
-      setIsLoading(false);
-      if (initialNotes.length === 0) setIsEmpty(true);
-    }
-    fetchNotes();
+  //   pageY.current = y;
+  // }, []);
 
-    return () => {
-      console.log('unmounted');
-      didCancel = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageType, paramsId]);
+  // useEffect(() => {
+  //   const options = {
+  //     root: mainRef.current,
+  //     rootMargin: '20px',
+  //     threshold: 0.8,
+  //   };
+
+  //   const observer = new IntersectionObserver(handleObserve, options);
+  //   if (target.current) observer.observe(target.current);
+  // }, [handleObserve]);
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;
   }
 
   function handleModelVisible(id, type) {
-    onEditorOpen();
+    onOpen();
 
     if (type === 'update') {
       setCurrentId(id);
@@ -108,7 +91,7 @@ export default function NotesPage({ pageType }) {
    */
   const handleNoteAdd = async (noteObject) => {
     try {
-      onEditorClose();
+      onClose();
       const createdNote = await createNoteApi(noteObject);
       setNotes(notes.concat(createdNote).sort(compare));
     } catch (error) {
@@ -122,7 +105,7 @@ export default function NotesPage({ pageType }) {
    */
   async function handleNoteUpdate(updatedNote) {
     try {
-      onEditorClose();
+      onClose();
       // 目前只能更新内容
       setNotes(
         notes.map((note) => (note.id === currentId
@@ -139,8 +122,13 @@ export default function NotesPage({ pageType }) {
     const note = notes.find((item) => item.id === id);
     const changedNote = { ...note, star: note.star ? 0 : 1 };
 
+    const updatedNotes = pageType === 'star'
+      ? notes.filter((item) => item.id !== id)
+      : notes.map((item) => (item.id !== id ? item : changedNote));
+
+    setNotes(updatedNotes);
+
     try {
-      setNotes(notes.map((n) => (n.id !== id ? n : changedNote)));
       await updateSingleNoteApi(id, changedNote);
     } catch (error) {
       handleError(error);
@@ -175,9 +163,7 @@ export default function NotesPage({ pageType }) {
   ));
 
   const noteListContent = () => (isEmpty ? (
-    <div>
-      <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
-    </div>
+    <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
   ) : (
     <ul>{noteItems}</ul>
   ));
@@ -185,7 +171,7 @@ export default function NotesPage({ pageType }) {
   return (
     <div className="relative flex h-screen">
       <AsideBlock />
-      <main className="flex-grow h-screen overflow-y-auto">
+      <main ref={mainRef} className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
           <TextEditor handleNoteSubmit={handleNoteAdd} />
@@ -193,7 +179,10 @@ export default function NotesPage({ pageType }) {
             <div className="relative h-screen grid place-items-center">
               <Spinner color="teal.500" />
             </div>
-          ) : noteListContent() }
+          ) : (
+            noteListContent()
+          )}
+          <div ref={target} />
         </div>
       </main>
 
@@ -204,7 +193,7 @@ export default function NotesPage({ pageType }) {
         message={{ headerText: '删除笔记', bodyText: '确定删除这条笔记吗？' }}
       />
 
-      <Modal onClose={onEditorClose} isOpen={isEditorOpen} size="4xl">
+      <Modal onClose={onClose} isOpen={isOpen} size="4xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{currentId ? '编辑笔记' : '新增笔记'}</ModalHeader>
