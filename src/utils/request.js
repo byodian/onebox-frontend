@@ -21,14 +21,14 @@ instance.interceptors.response.use((res) => res.data, (err) => {
   let customMessage;
   switch (code) {
     case 401:
-      customMessage = '登陆过期，请重新登陆';
+      customMessage = message || '登陆过期，请重新登陆';
       // 清除缓存
       clearStorage();
 
       // 重新加载页面
-      setTimeout(() => {
-        document.location.replace('/login');
-      }, 2000);
+      // setTimeout(() => {
+      //   document.location.replace('/login');
+      // }, 2000);
       break;
     default:
       customMessage = message || '服务器连接异常，请稍后再重试操作';

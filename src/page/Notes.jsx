@@ -1,4 +1,6 @@
-import { useState, useRef } from 'react';
+import {
+  useState, useRef, useCallback, useEffect,
+} from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   Modal,
@@ -25,12 +27,18 @@ import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg'
 
 import { compare } from '../utils';
 import { useAuth, useCustomToast, useFetch } from '../hooks';
-import { createNoteApi, removeSingleNoteApi, updateSingleNoteApi } from '../services/note';
+import {
+  createNoteApi,
+  removeSingleNoteApi,
+  updateSingleNoteApi,
+} from '../services/note';
 
 export default function NotesPage({ pageType }) {
   const [currentId, setCurrentId] = useState('');
-  // const [current, setCurrent] = useState(0);
   const [visible, setVisible] = useState(false);
+  // Storing the last intersection y position
+  const pageY = useRef(0);
+  const loadingRef = useRef(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleError = useCustomToast();
@@ -39,35 +47,43 @@ export default function NotesPage({ pageType }) {
   const auth = useAuth();
   const paramsId = params.folderId;
 
-  const [{ notes, isLoading, isEmpty }, setNotes] = useFetch({ pageType, paramsId, current: 0 });
+  const [{ notes, isLoading, count }, setNotes, setCurrent] = useFetch({
+    pageType,
+    paramsId,
+  });
 
-  const mainRef = useRef(null);
-  const target = useRef(null);
-  // const pageY = useRef(0); // Storing the last intersection y position
+  const loadingCSS = {
+    height: '50px',
+    margin: '30px',
+  };
+  const loadingTextCSS = { display: isLoading ? 'block' : 'none' };
 
-  // const handleObserve = useCallback((entries) => {
-  //   const { isIntersecting } = entries[0];
-  //   const { y } = entries[0].boundingClientRect;
+  const handleObserve = useCallback((entries) => {
+    const { isIntersecting } = entries[0];
+    const { y } = entries[0].boundingClientRect;
 
-  //   if (isIntersecting && pageY.current > y) {
-  //     console.log(entries[0]);
-  //     console.log(y);
-  //     setCurrent((prev) => prev + 1);
-  //   }
+    if (isIntersecting && pageY.current > y) {
+      console.log('y', y);
+      console.log('count', count);
+      console.log('notes', notes.length);
+      if (count > notes.length) setCurrent((prev) => prev + 1);
+    }
 
-  //   pageY.current = y;
-  // }, []);
+    pageY.current = y;
+  }, [count, notes.length, setCurrent]);
 
-  // useEffect(() => {
-  //   const options = {
-  //     root: mainRef.current,
-  //     rootMargin: '20px',
-  //     threshold: 0.8,
-  //   };
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: '20px',
+      threshold: 1,
+    };
 
-  //   const observer = new IntersectionObserver(handleObserve, options);
-  //   if (target.current) observer.observe(target.current);
-  // }, [handleObserve]);
+    // https://developer.mozilla.org/zh-CN/docs/Web/API/Intersection_Observer_API
+    // 监听加载元素是否可见，如果可见执行回调函数
+    const observer = new IntersectionObserver(handleObserve, options);
+    if (loadingRef.current) observer.observe(loadingRef.current);
+  }, [handleObserve]);
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;
@@ -162,27 +178,25 @@ export default function NotesPage({ pageType }) {
     </NoteItem>
   ));
 
-  const noteListContent = () => (isEmpty ? (
-    <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
-  ) : (
-    <ul>{noteItems}</ul>
-  ));
-
   return (
     <div className="relative flex h-screen">
       <AsideBlock />
-      <main ref={mainRef} className="flex-grow h-screen overflow-y-auto">
+      <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
           <TextEditor handleNoteSubmit={handleNoteAdd} />
-          {isLoading ? (
+          {isLoading && (
             <div className="relative h-screen grid place-items-center">
               <Spinner color="teal.500" />
             </div>
-          ) : (
-            noteListContent()
           )}
-          <div ref={target} />
+          <ul>{noteItems}</ul>
+          {notes.length === 0 && (
+            <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
+          )}
+          <div ref={loadingRef} style={loadingCSS}>
+            <span style={loadingTextCSS}>Loading...</span>
+          </div>
         </div>
       </main>
 

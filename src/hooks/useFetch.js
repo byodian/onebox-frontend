@@ -1,37 +1,51 @@
-import { useState, useEffect, useCallback } from 'react';
+import {
+  useState, useEffect, useCallback, useRef,
+} from 'react';
 
 import { getNotesApi } from '../services/note';
 import { getSingleFolderApi } from '../services/folder';
 
 export default function useFetch({ pageType, paramsId }) {
   const [notes, setNotes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEmpty, setIsEmpty] = useState(false);
+  const [count, setCount] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const pageTypeRef = useRef(pageType);
 
   const fetchNotes = useCallback(async () => {
-    let fetchedNotes;
+    let result;
     setIsLoading(true);
-    setIsEmpty(false);
+    setIsError(false);
+
+    // 跳转页面后，重置数据
+    if (pageTypeRef.current !== pageType) {
+      setNotes([]);
+      setCurrent(0);
+      setCount(0);
+      pageTypeRef.current = pageType;
+    }
 
     try {
       if (pageType === 'folder') {
         const folder = await getSingleFolderApi(paramsId);
-        fetchedNotes = folder.notes;
+        result = folder.notes;
       } else {
-        // fetchedNotes = await getNotesApi(pageType, { pageSize: 10, current });
-        fetchedNotes = await getNotesApi(pageType);
+        result = await getNotesApi(pageType, { pageSize: 8, current });
       }
 
+      const fetchedNotes = pageType === 'folder' ? result : result.data;
+      const total = pageType === 'folder' ? fetchedNotes.length : result.count;
+
       setNotes((prevNotes) => [...prevNotes, ...fetchedNotes]);
+      setCount(total);
 
       setIsLoading(false);
-      if (fetchedNotes.length === 0) setIsEmpty(true);
     } catch (error) {
       setIsLoading(false);
       setIsError(true);
     }
-  }, [paramsId, pageType]);
+  }, [paramsId, pageType, current]);
 
   useEffect(() => {
     fetchNotes();
@@ -39,14 +53,14 @@ export default function useFetch({ pageType, paramsId }) {
     // cleanup
     return () => {
       console.log('unmounted');
-      setNotes([]);
     };
   }, [fetchNotes]);
 
   return [
     {
-      isLoading, isEmpty, isError, notes,
+      isLoading, isError, notes, count,
     },
     setNotes,
+    setCurrent,
   ];
 }
