@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Logo from '../components/Logo';
 import AccountLoginForm from '../components/AccountLoginForm';
 import AccountRegisterForm from '../components/AccountRegisterForm';

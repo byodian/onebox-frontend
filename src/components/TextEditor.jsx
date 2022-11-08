@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { Button } from '@chakra-ui/react';
@@ -8,21 +8,13 @@ const editorConfig = {
     items: [
       'bold',
       'italic',
+      'strikethrough',
       'underline',
       'link',
       'bulletedList',
       'numberedList',
-      'highlight',
-      '|',
-      'outdent',
-      'indent',
-      '|',
       'code',
       'codeBlock',
-      'removeFormat',
-      'undo',
-      'redo',
-
     ],
   },
 };
@@ -50,6 +42,7 @@ function TextEditor({ handleNoteSubmit, initialContent }) {
   return (
     <div className="py-6">
       <CKEditor
+        className="ckeditor-test"
         editor={Editor}
         config={editorConfig}
         data={text}

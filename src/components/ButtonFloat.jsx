@@ -1,4 +1,3 @@
-import React from 'react';
 import { FloatContainer, FloatActionButton } from './ButtonFloatStyles';
 import { PlusIcon } from './IconStyles';
 

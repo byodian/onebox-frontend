@@ -1,58 +1,83 @@
-import React, { useState, useContext, createContext } from 'react';
+import { useState, useContext, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService, userService } from '../api';
-
-const authContext = createContext();
-
-const useAuth = () => useContext(authContext);
+import { useToast } from '@chakra-ui/react';
+import { loginApi, createUserApi } from '../services/user';
+import {
+  getStorageUser,
+  getStorageLogIn,
+  getStorageToken,
+  generateStorageToken,
+  generateStorageUser,
+  generateStorageLogIn,
+  clearStorage,
+} from '../utils/auth';
 
 function useProvidedAuth() {
-  const userItem = localStorage.getItem('user');
-  const tokenItem = localStorage.getItem('token');
-  const initialUser = userItem && JSON.parse(userItem);
-  const initialToken = tokenItem && JSON.parse(tokenItem);
-
-  const [user, setUser] = useState(initialUser ?? null);
-  const [token, setToken] = useState(initialToken ?? null);
+  const toast = useToast();
+  const [user, setUser] = useState(getStorageUser());
+  const [accessToken, setAccessToken] = useState(getStorageToken());
+  const [isAuth, setIsAuth] = useState(getStorageLogIn() ?? false);
   const navigate = useNavigate();
 
   const login = async (userObject) => {
     try {
-      const { username, token: userToken } = await authService.login(userObject);
-      localStorage.setItem('user', JSON.stringify(username));
-      localStorage.setItem('token', JSON.stringify(userToken));
-      setUser(username);
-      setToken(userToken);
-      navigate('/notes');
+      const { user: currentUser, token } = await loginApi(userObject);
+      // 缓存数据
+      generateStorageToken(token);
+      generateStorageLogIn(true);
+      generateStorageUser(currentUser);
+
+      setUser(currentUser);
+      setAccessToken(token);
+      setIsAuth(true);
+      navigate('/notes/all');
     } catch (error) {
-      // handleMessage('用户名或密码不正确', 'error');
-      console.log(error.message);
+      toast({
+        title: error.message,
+        position: 'top',
+        status: 'error',
+        duration: 3000,
+      });
     }
   };
 
   const register = async (newUser) => {
     try {
-      await userService.create(newUser);
+      await createUserApi(newUser);
+      toast({
+        title: '注册成功，请前往登陆',
+        position: 'top',
+        status: 'success',
+        duration: 3000,
+      });
       navigate('/login');
     } catch (error) {
-      // handleMessage('您输入的邮箱地址或用户名已被使用', 'error');
-      console.dir(error.message);
+      toast({
+        title: error.message,
+        position: 'top',
+        status: 'error',
+        duration: 3000,
+      });
     }
   };
 
   const logout = () => {
-    localStorage.clear();
+    clearStorage();
+    setIsAuth(false);
     navigate('/');
   };
 
   return {
     user,
-    token,
+    accessToken,
+    isAuth,
     login,
     register,
     logout,
   };
 }
+
+const authContext = createContext();
 
 export function ProvideAuth({ children }) {
   const auth = useProvidedAuth();
@@ -60,4 +85,6 @@ export function ProvideAuth({ children }) {
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
-export default useAuth;
+export function useAuth() {
+  return useContext(authContext);
+}

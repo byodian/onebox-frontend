@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import Auth from './page/Auth';
@@ -21,14 +20,43 @@ function App() {
             </ProvideAuth>
           )}
         />
+
         <Route
-          path="/notes"
+          path="/notes/all"
           element={(
             <ProvideAuth>
-              <Notes />
+              <Notes pageType="all" />
             </ProvideAuth>
           )}
         />
+
+        <Route
+          path="/notes/today"
+          element={(
+            <ProvideAuth>
+              <Notes pageType="today" />
+            </ProvideAuth>
+          )}
+        />
+
+        <Route
+          path="/notes/star"
+          element={(
+            <ProvideAuth>
+              <Notes pageType="star" />
+            </ProvideAuth>
+          )}
+        />
+
+        <Route
+          path="/folders/:folderId"
+          element={(
+            <ProvideAuth>
+              <Notes pageType="folder" />
+            </ProvideAuth>
+          )}
+        />
+
         <Route
           path="/login"
           element={(
@@ -37,6 +65,7 @@ function App() {
             </ProvideAuth>
           )}
         />
+
         <Route
           path="/register"
           element={(
@@ -45,7 +74,14 @@ function App() {
             </ProvideAuth>
           )}
         />
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={(
+            <ProvideAuth>
+              <Home />
+            </ProvideAuth>
+          )}
+        />
         <Route path="*" element={<Home />} />
       </Routes>
     </ChakraProvider>

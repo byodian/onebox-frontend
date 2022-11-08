@@ -1,4 +1,3 @@
-import React from 'react';
 import { TagsInputWrap, TagsInput, TagsButton } from './InputTagStyles';
 
 function TagsField({ tagsState, handleTagsSubmit }) {

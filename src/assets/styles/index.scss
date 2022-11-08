@@ -1,5 +1,7 @@
 @import './abstracts/variables';
+@import './components/antdesign-reset.scss';
 @import './components/ckEditor';
+@import '~antd/dist/antd.css';
 
 @tailwind base;
 @tailwind components;
@@ -10,5 +12,41 @@ html {
 }
 
 body {
-  font-size: 1rem; 
+  font-size: 1rem;
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Reset prismjs `pre` element styles with tailwindcss
+pre[class*="language-"] {
+  font-size: 0.875em;
+  line-height: 1.7142857;
+  margin-top: 0;
+  margin-bottom: 0;
+  border-radius: 0.375rem;
+  padding-top: 0.8571429em;
+  padding-right: 1.1428571em;
+  padding-bottom: 0.8571429em;
+  padding-left: 1.1428571em;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+
+/* 定义滚动条轨道 */
+::-webkit-scrollbar-track {
+  background-color: #EDECE9;
+}
+
+/* 定义滑块 */
+::-webkit-scrollbar-thumb {
+  background-color: #D3D1CB;
+}
+
