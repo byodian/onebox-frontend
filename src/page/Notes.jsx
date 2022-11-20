@@ -1,6 +1,4 @@
-import {
-  useState, useRef, useCallback, useEffect,
-} from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   Modal,
@@ -52,38 +50,49 @@ export default function NotesPage({ pageType }) {
     paramsId,
   });
 
-  const loadingCSS = {
-    height: '50px',
-    margin: '30px',
-  };
+  const loadingCSS = { height: '50px', margin: '30px', textAlign: 'center' };
   const loadingTextCSS = { display: isLoading ? 'block' : 'none' };
 
-  const handleObserve = useCallback((entries) => {
-    const { isIntersecting } = entries[0];
-    const { y } = entries[0].boundingClientRect;
-
-    if (isIntersecting && pageY.current > y) {
-      console.log('y', y);
-      console.log('count', count);
-      console.log('notes', notes.length);
-      if (count > notes.length) setCurrent((prev) => prev + 1);
-    }
-
-    pageY.current = y;
-  }, [count, notes.length, setCurrent]);
-
   useEffect(() => {
+    const len = notes.length;
+    console.log('effect');
+    console.log('count', count);
+    console.log('notes', len);
     const options = {
       root: null,
       rootMargin: '20px',
       threshold: 1,
     };
 
+    function handleObserve({ entries, total, currentNoteTotal }) {
+      const { isIntersecting } = entries[0];
+      const { y } = entries[0].boundingClientRect;
+
+      if (isIntersecting && pageY.current > y) {
+        console.log('y', y);
+        console.log('count', total);
+        console.log('notes', currentNoteTotal);
+        if (total > currentNoteTotal) setCurrent((prev) => prev + 1);
+      }
+
+      pageY.current = y;
+    }
+
     // https://developer.mozilla.org/zh-CN/docs/Web/API/Intersection_Observer_API
     // 监听加载元素是否可见，如果可见执行回调函数
-    const observer = new IntersectionObserver(handleObserve, options);
-    if (loadingRef.current) observer.observe(loadingRef.current);
-  }, [handleObserve]);
+    // fix: 修复滚动无法刷新数据
+    if (count >= len) {
+      const observer = new IntersectionObserver(
+        (entries) => handleObserve({
+          entries,
+          total: count,
+          currentNoteTotal: len,
+        }),
+        options,
+      );
+      if (loadingRef.current) observer.observe(loadingRef.current);
+    }
+  }, [count, notes.length, setCurrent]);
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;

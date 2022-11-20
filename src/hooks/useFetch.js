@@ -31,7 +31,7 @@ export default function useFetch({ pageType, paramsId }) {
         const folder = await getSingleFolderApi(paramsId);
         result = folder.notes;
       } else {
-        result = await getNotesApi(pageType, { pageSize: 8, current });
+        result = await getNotesApi(pageType, { pageSize: 15, current });
       }
 
       const fetchedNotes = pageType === 'folder' ? result : result.data;
