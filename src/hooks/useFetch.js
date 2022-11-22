@@ -9,7 +9,7 @@ export default function useFetch({ pageType, paramsId }) {
   const [notes, setNotes] = useState([]);
   const [count, setCount] = useState(0);
   const [current, setCurrent] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const pageTypeRef = useRef(pageType);
 

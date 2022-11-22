@@ -7,7 +7,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  Spinner,
   useDisclosure,
 } from '@chakra-ui/react';
 
@@ -194,13 +193,8 @@ export default function NotesPage({ pageType }) {
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
           <TextEditor handleNoteSubmit={handleNoteAdd} />
-          {isLoading && (
-            <div className="relative h-screen grid place-items-center">
-              <Spinner color="teal.500" />
-            </div>
-          )}
           <ul>{noteItems}</ul>
-          {notes.length === 0 && (
+          { !isLoading && notes.length === 0 && (
             <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
           )}
           <div ref={loadingRef} style={loadingCSS}>
