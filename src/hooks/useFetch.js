@@ -12,6 +12,7 @@ export default function useFetch({ pageType, paramsId }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const pageTypeRef = useRef(pageType);
+  const folderRef = useRef(paramsId);
 
   const fetchNotes = useCallback(async () => {
     let result;
@@ -19,11 +20,12 @@ export default function useFetch({ pageType, paramsId }) {
     setIsError(false);
 
     // 跳转页面后，重置数据
-    if (pageTypeRef.current !== pageType) {
+    if (pageTypeRef.current !== pageType || folderRef.current !== paramsId) {
       setNotes([]);
       setCurrent(0);
       setCount(0);
       pageTypeRef.current = pageType;
+      folderRef.current = paramsId;
     }
 
     try {

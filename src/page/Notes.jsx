@@ -30,9 +30,14 @@ import {
   updateSingleNoteApi,
 } from '../services/note';
 
+import { getAllFolders } from '../services/folder';
+
 export default function NotesPage({ pageType }) {
   const [currentId, setCurrentId] = useState('');
+  const [currentFolderId, setCurrentFolderId] = useState('');
   const [visible, setVisible] = useState(false);
+  const [folders, setFolders] = useState([]);
+
   // Storing the last intersection y position
   const pageY = useRef(0);
   const loadingRef = useRef(null);
@@ -93,15 +98,30 @@ export default function NotesPage({ pageType }) {
     }
   }, [count, notes.length, setCurrent]);
 
+  useEffect(() => {
+    async function fetchFolders() {
+      try {
+        const initialFolders = await getAllFolders();
+        setFolders(initialFolders);
+      } catch (err) {
+        handleError(err);
+      }
+    }
+
+    fetchFolders();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notes.length]);
+
   if (!auth.user) {
     return <Navigate to="/login" replace />;
   }
 
-  function handleModelVisible(id, type) {
+  function handleModelVisible(note, type) {
     onOpen();
 
     if (type === 'update') {
-      setCurrentId(id);
+      setCurrentId(note.id);
+      setCurrentFolderId(note.folderId);
     } else {
       setCurrentId('');
     }
@@ -128,14 +148,14 @@ export default function NotesPage({ pageType }) {
    * @param {String} updateNote.content
    */
   async function handleNoteUpdate(updatedNote) {
+    const folderId = updatedNote.folderId ? updatedNote.folderId : '';
+    onClose();
+    setNotes(
+      notes.map((note) => (note.id === currentId
+        ? { ...note, content: updatedNote.content, folderId }
+        : note)),
+    );
     try {
-      onClose();
-      // 目前只能更新内容
-      setNotes(
-        notes.map((note) => (note.id === currentId
-          ? { ...note, content: updatedNote.content }
-          : note)),
-      );
       await updateSingleNoteApi(currentId, updatedNote);
     } catch (error) {
       handleError(error);
@@ -180,7 +200,7 @@ export default function NotesPage({ pageType }) {
         star={note.star}
         toggleStar={() => handleStarToggle(note.id)}
         deleteNote={() => handleDeleteOverlayOpen(note.id)}
-        toggleVisible={() => handleModelVisible(note.id, 'update')}
+        toggleVisible={() => handleModelVisible(note, 'update')}
         goDetail={() => navigate(`/notes/${note.id}`)}
       />
     </NoteItem>
@@ -188,11 +208,11 @@ export default function NotesPage({ pageType }) {
 
   return (
     <div className="relative flex h-screen">
-      <AsideBlock />
+      <AsideBlock folders={folders} setFolders={setFolders} />
       <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
-          <TextEditor handleNoteSubmit={handleNoteAdd} />
+          <TextEditor handleNoteSubmit={handleNoteAdd} folders={folders} />
           <ul>{noteItems}</ul>
           { !isLoading && notes.length === 0 && (
             <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
@@ -221,6 +241,8 @@ export default function NotesPage({ pageType }) {
               initialContent={
                 currentId ? notes.find((n) => n.id === currentId)?.content : ''
               }
+              initialFolderId={currentFolderId}
+              folders={folders}
             />
           </ModalBody>
         </ModalContent>

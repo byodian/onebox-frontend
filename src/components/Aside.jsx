@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Collapse } from 'antd';
 import {
   IconButton,
@@ -24,12 +24,14 @@ import {
   PlusIcon,
   BsTrashIcon,
   BsThreeDotsIcon,
-  BsPencilSquareIcon,
+  // BsPencilSquareIcon,
 } from './AsideStyles';
 
 import { useCustomToast, useField } from '../hooks';
 import {
-  createFolderApi, getAllFolders, removeSingleFolderApi, updateSingleFolderApi,
+  createFolderApi,
+  removeSingleFolderApi,
+  updateSingleFolderApi,
 } from '../services/folder';
 
 const { Panel } = Collapse;
@@ -39,28 +41,13 @@ const asideLinks = [
   { url: '/notes/today', name: '今日', icon: <CalendarIcon /> },
 ];
 
-export default function AsideBlock() {
+export default function AsideBlock({ folders, setFolders }) {
   const [visible, setVisible] = useState(false);
-  const [folders, setFolders] = useState([]);
   const [currentFolderId, setCurrentFolderId] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const handleError = useCustomToast();
   const inputField = useField();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    async function fetchFolders() {
-      try {
-        const initialFolders = await getAllFolders();
-        setFolders(initialFolders);
-      } catch (err) {
-        handleError(err);
-      }
-    }
-
-    fetchFolders();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSubmit = async (event) => {
     if (event.key === 'Enter') {
@@ -92,12 +79,13 @@ export default function AsideBlock() {
     inputField.reset();
   };
 
-  const handleEdit = (folderId) => {
-    setVisible(true);
-    setCurrentFolderId(folderId);
-  };
+  // const handleEdit = (folderId) => {
+  //   setVisible(true);
+  //   setCurrentFolderId(folderId);
+  // };
 
-  const handleModalOpen = (id) => {
+  const handleModalOpen = (e, id) => {
+    e.stopPropagation();
     setCurrentFolderId(id);
     setIsOpen(true);
   };
@@ -140,17 +128,17 @@ export default function AsideBlock() {
           className="edit-button"
         />
         <MenuList>
-          <MenuItem
-            icon={<BsPencilSquareIcon />}
-            color="gray"
-            onClick={() => handleEdit(folder.id)}
-          >
-            重命名
-          </MenuItem>
+          {/* <MenuItem */}
+          {/*   icon={<BsPencilSquareIcon />} */}
+          {/*   color="gray" */}
+          {/*   onClick={() => handleEdit(folder.id)} */}
+          {/* > */}
+          {/*   重命名 */}
+          {/* </MenuItem> */}
           <MenuItem
             icon={<BsTrashIcon />}
             color="gray"
-            onClick={() => handleModalOpen(folder.id)}
+            onClick={(e) => handleModalOpen(e, folder.id)}
           >
             删除
           </MenuItem>
