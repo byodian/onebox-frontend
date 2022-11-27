@@ -49,16 +49,26 @@ export default function NotesPage({ pageType }) {
   const auth = useAuth();
   const paramsId = params.folderId;
 
+  const pageSize = 15;
   const [{ notes, isLoading, count }, setNotes, setCurrent] = useFetch({
     pageType,
     paramsId,
+    pageSize,
   });
+  // 动态变化
+  const len = notes.length;
 
-  const loadingCSS = { height: '50px', margin: '30px', textAlign: 'center' };
+  const loadingCSS = {
+    height: '50px',
+    margin: '30px',
+    textAlign: 'center',
+    // 所有数据加载完毕，隐藏触底刷新组件
+    display: count !== 0 && len === count ? 'none' : 'block',
+  };
+
   const loadingTextCSS = { display: isLoading ? 'block' : 'none' };
 
   useEffect(() => {
-    const len = notes.length;
     console.log('effect');
     console.log('count', count);
     console.log('notes', len);
@@ -68,7 +78,7 @@ export default function NotesPage({ pageType }) {
       threshold: 1,
     };
 
-    function handleObserve({ entries, total, currentNoteTotal }) {
+    const handleObserve = ({ entries, total, currentNoteTotal }) => {
       const { isIntersecting } = entries[0];
       const { y } = entries[0].boundingClientRect;
 
@@ -80,12 +90,12 @@ export default function NotesPage({ pageType }) {
       }
 
       pageY.current = y;
-    }
+    };
 
     // https://developer.mozilla.org/zh-CN/docs/Web/API/Intersection_Observer_API
     // 监听加载元素是否可见，如果可见执行回调函数
-    // fix: 修复滚动无法刷新数据
-    if (count >= len) {
+    // 数据未加载前不注册滚动触底刷新回调，避免无效刷新
+    if (count !== 0 && count > len) {
       const observer = new IntersectionObserver(
         (entries) => handleObserve({
           entries,
@@ -96,7 +106,7 @@ export default function NotesPage({ pageType }) {
       );
       if (loadingRef.current) observer.observe(loadingRef.current);
     }
-  }, [count, notes.length, setCurrent]);
+  }, [count, len, setCurrent]);
 
   useEffect(() => {
     async function fetchFolders() {
@@ -184,6 +194,23 @@ export default function NotesPage({ pageType }) {
     setVisible(true);
   }
 
+  const handleFolderUpdate = async (folderId) => {
+    const note = notes.find((item) => item.id === currentId);
+    const changedNote = { ...note, folderId };
+
+    const updatedNotes = notes.map((item) => (item.id === currentId
+      ? changedNote
+      : item));
+
+    setNotes(updatedNotes);
+
+    try {
+      await updateSingleNoteApi(currentId, changedNote);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   async function handleNoteDelete(id) {
     try {
       setNotes(notes.filter((n) => n.id !== id));
@@ -197,11 +224,14 @@ export default function NotesPage({ pageType }) {
   const noteItems = notes.map((note) => (
     <NoteItem note={note} key={note.id}>
       <NoteItemIcon
+        folders={folders}
         star={note.star}
         toggleStar={() => handleStarToggle(note.id)}
         deleteNote={() => handleDeleteOverlayOpen(note.id)}
-        toggleVisible={() => handleModelVisible(note, 'update')}
+        toggleEditDialog={() => handleModelVisible(note, 'update')}
         goDetail={() => navigate(`/notes/${note.id}`)}
+        toggleFolder={() => setCurrentId(note.id)}
+        updateFolder={handleFolderUpdate}
       />
     </NoteItem>
   ));

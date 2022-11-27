@@ -11,7 +11,7 @@ import {
   MenuItem,
 } from '@chakra-ui/react';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AlertCustomDialog from './AlertCustomDialog';
 
 import {
@@ -24,7 +24,7 @@ import {
   PlusIcon,
   BsTrashIcon,
   BsThreeDotsIcon,
-  // BsPencilSquareIcon,
+  BsPencilSquareIcon,
 } from './AsideStyles';
 
 import { useCustomToast, useField } from '../hooks';
@@ -44,10 +44,11 @@ const asideLinks = [
 export default function AsideBlock({ folders, setFolders }) {
   const [visible, setVisible] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
+  const [dialogVisibility, setDialogVisibility] = useState(false);
   const handleError = useCustomToast();
   const inputField = useField();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (event) => {
     if (event.key === 'Enter') {
@@ -79,15 +80,10 @@ export default function AsideBlock({ folders, setFolders }) {
     inputField.reset();
   };
 
-  // const handleEdit = (folderId) => {
-  //   setVisible(true);
-  //   setCurrentFolderId(folderId);
-  // };
-
   const handleModalOpen = (e, id) => {
     e.stopPropagation();
     setCurrentFolderId(id);
-    setIsOpen(true);
+    setDialogVisibility(true);
   };
 
   const handleDelete = async () => {
@@ -95,7 +91,7 @@ export default function AsideBlock({ folders, setFolders }) {
       await removeSingleFolderApi(currentFolderId);
       setFolders(folders.filter((item) => item.id !== currentFolderId));
       setCurrentFolderId('');
-      setIsOpen(false);
+      setDialogVisibility(false);
       navigate('/notes/all');
     } catch (err) {
       handleError(err);
@@ -113,7 +109,11 @@ export default function AsideBlock({ folders, setFolders }) {
   );
 
   const folderItems = folders.map((folder) => (
-    <AsideNavLink to={`/folders/${folder.id}`} key={folder.id}>
+    <AsideNavLink
+      key={folder.id}
+      onClick={() => navigate(`/folders/${folder.id}`)}
+      className={location.pathname === `/folders/${folder.id}` ? 'active' : ''}
+    >
       <FolderIcon />
       <span>{folder.name}</span>
       <span className="ml-auto text-gray-400 save-notes">
@@ -121,6 +121,7 @@ export default function AsideBlock({ folders, setFolders }) {
       </span>
       <Menu>
         <MenuButton
+          onClick={(e) => e.stopPropagation()}
           as={IconButton}
           aria-label="Options"
           icon={<BsThreeDotsIcon />}
@@ -128,13 +129,13 @@ export default function AsideBlock({ folders, setFolders }) {
           className="edit-button"
         />
         <MenuList>
-          {/* <MenuItem */}
-          {/*   icon={<BsPencilSquareIcon />} */}
-          {/*   color="gray" */}
-          {/*   onClick={() => handleEdit(folder.id)} */}
-          {/* > */}
-          {/*   重命名 */}
-          {/* </MenuItem> */}
+          <MenuItem
+            icon={<BsPencilSquareIcon />}
+            color="gray"
+            onClick={(e) => e.stopPropagation()}
+          >
+            重命名
+          </MenuItem>
           <MenuItem
             icon={<BsTrashIcon />}
             color="gray"
@@ -151,7 +152,11 @@ export default function AsideBlock({ folders, setFolders }) {
     <Aside>
       <div className="flex flex-col gap-y-4 mb-8">
         {asideLinks.map((link) => (
-          <AsideNavLink to={link.url} key={link.name}>
+          <AsideNavLink
+            onClick={() => navigate(link.url)}
+            key={link.name}
+            className={location.pathname === link.url ? 'active' : ''}
+          >
             {link.icon}
             <span>{link.name}</span>
           </AsideNavLink>
@@ -189,9 +194,9 @@ export default function AsideBlock({ folders, setFolders }) {
       </div>
 
       <AlertCustomDialog
-        isOpen={isOpen}
+        isOpen={dialogVisibility}
         handleConfirm={handleDelete}
-        handleClose={() => setIsOpen(false)}
+        handleClose={() => setDialogVisibility(false)}
         message={{ headerText: '删除文件夹', bodyText: '此文件夹里面的笔记不会被删除' }}
       />
     </Aside>

@@ -5,7 +5,7 @@ import {
 import { getNotesApi } from '../services/note';
 import { getSingleFolderApi } from '../services/folder';
 
-export default function useFetch({ pageType, paramsId }) {
+export default function useFetch({ pageType, paramsId, pageSize }) {
   const [notes, setNotes] = useState([]);
   const [count, setCount] = useState(0);
   const [current, setCurrent] = useState(0);
@@ -33,7 +33,7 @@ export default function useFetch({ pageType, paramsId }) {
         const folder = await getSingleFolderApi(paramsId);
         result = folder.notes;
       } else {
-        result = await getNotesApi(pageType, { pageSize: 15, current });
+        result = await getNotesApi(pageType, { pageSize, current });
       }
 
       const fetchedNotes = pageType === 'folder' ? result : result.data;
@@ -47,7 +47,7 @@ export default function useFetch({ pageType, paramsId }) {
       setIsLoading(false);
       setIsError(true);
     }
-  }, [paramsId, pageType, current]);
+  }, [paramsId, pageType, current, pageSize]);
 
   useEffect(() => {
     fetchNotes();
