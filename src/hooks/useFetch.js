@@ -5,10 +5,8 @@ import {
 import { getNotesApi } from '../services/note';
 import { getSingleFolderApi } from '../services/folder';
 
-export default function useFetch({ pageType, paramsId, pageSize }) {
+export default function useFetch({ pageType, paramsId }) {
   const [notes, setNotes] = useState([]);
-  const [count, setCount] = useState(0);
-  const [current, setCurrent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const pageTypeRef = useRef(pageType);
@@ -22,8 +20,6 @@ export default function useFetch({ pageType, paramsId, pageSize }) {
     // 跳转页面后，重置数据
     if (pageTypeRef.current !== pageType || folderRef.current !== paramsId) {
       setNotes([]);
-      setCurrent(0);
-      setCount(0);
       pageTypeRef.current = pageType;
       folderRef.current = paramsId;
     }
@@ -33,21 +29,19 @@ export default function useFetch({ pageType, paramsId, pageSize }) {
         const folder = await getSingleFolderApi(paramsId);
         result = folder.notes;
       } else {
-        result = await getNotesApi(pageType, { pageSize, current });
+        result = await getNotesApi(pageType);
       }
 
       const fetchedNotes = pageType === 'folder' ? result : result.data;
-      const total = pageType === 'folder' ? fetchedNotes.length : result.count;
 
       setNotes((prevNotes) => [...prevNotes, ...fetchedNotes]);
-      setCount(total);
 
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       setIsError(true);
     }
-  }, [paramsId, pageType, current, pageSize]);
+  }, [paramsId, pageType]);
 
   useEffect(() => {
     fetchNotes();
@@ -60,9 +54,8 @@ export default function useFetch({ pageType, paramsId, pageSize }) {
 
   return [
     {
-      isLoading, isError, notes, count,
+      isLoading, isError, notes,
     },
     setNotes,
-    setCurrent,
   ];
 }

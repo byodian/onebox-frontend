@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   Modal,
@@ -38,10 +38,6 @@ export default function NotesPage({ pageType }) {
   const [visible, setVisible] = useState(false);
   const [folders, setFolders] = useState([]);
 
-  // Storing the last intersection y position
-  const pageY = useRef(0);
-  const loadingRef = useRef(null);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleError = useCustomToast();
   const navigate = useNavigate();
@@ -49,64 +45,10 @@ export default function NotesPage({ pageType }) {
   const auth = useAuth();
   const paramsId = params.folderId;
 
-  const pageSize = 15;
-  const [{ notes, isLoading, count }, setNotes, setCurrent] = useFetch({
+  const [{ notes, isLoading }, setNotes] = useFetch({
     pageType,
     paramsId,
-    pageSize,
   });
-  // 动态变化
-  const len = notes.length;
-
-  const loadingCSS = {
-    height: '50px',
-    margin: '30px',
-    textAlign: 'center',
-    // 所有数据加载完毕，隐藏触底刷新组件
-    display: count !== 0 && len === count ? 'none' : 'block',
-  };
-
-  const loadingTextCSS = { display: isLoading ? 'block' : 'none' };
-
-  useEffect(() => {
-    console.log('effect');
-    console.log('count', count);
-    console.log('notes', len);
-    const options = {
-      root: null,
-      rootMargin: '20px',
-      threshold: 1,
-    };
-
-    const handleObserve = ({ entries, total, currentNoteTotal }) => {
-      const { isIntersecting } = entries[0];
-      const { y } = entries[0].boundingClientRect;
-
-      if (isIntersecting && pageY.current > y) {
-        console.log('y', y);
-        console.log('count', total);
-        console.log('notes', currentNoteTotal);
-        if (total > currentNoteTotal) setCurrent((prev) => prev + 1);
-      }
-
-      pageY.current = y;
-    };
-
-    // https://developer.mozilla.org/zh-CN/docs/Web/API/Intersection_Observer_API
-    // 监听加载元素是否可见，如果可见执行回调函数
-    // 数据未加载前不注册滚动触底刷新回调，避免无效刷新
-    if (count !== 0 && count > len) {
-      const observer = new IntersectionObserver(
-        (entries) => handleObserve({
-          entries,
-          total: count,
-          currentNoteTotal: len,
-        }),
-        options,
-      );
-      if (loadingRef.current) observer.observe(loadingRef.current);
-    }
-  }, [count, len, setCurrent]);
 
   useEffect(() => {
     async function fetchFolders() {
@@ -120,7 +62,7 @@ export default function NotesPage({ pageType }) {
 
     fetchFolders();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notes.length]);
+  }, []);
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;
@@ -247,9 +189,6 @@ export default function NotesPage({ pageType }) {
           { !isLoading && notes.length === 0 && (
             <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
           )}
-          <div ref={loadingRef} style={loadingCSS}>
-            <span style={loadingTextCSS}>Loading...</span>
-          </div>
         </div>
       </main>
 
