@@ -31,6 +31,7 @@ import {
 } from '../services/note';
 
 import { getAllFolders } from '../services/folder';
+import { getEditorContent } from '../utils/auth';
 
 export default function NotesPage({ pageType }) {
   const [currentId, setCurrentId] = useState('');
@@ -86,13 +87,9 @@ export default function NotesPage({ pageType }) {
    * @returns
    */
   const handleNoteAdd = async (noteObject) => {
-    try {
-      onClose();
-      const createdNote = await createNoteApi(noteObject);
-      setNotes(notes.concat(createdNote).sort(compare));
-    } catch (error) {
-      handleError(error);
-    }
+    onClose();
+    const createdNote = await createNoteApi(noteObject);
+    setNotes(notes.concat(createdNote).sort(compare));
   };
 
   /**
@@ -184,7 +181,12 @@ export default function NotesPage({ pageType }) {
       <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
-          <TextEditor handleNoteSubmit={handleNoteAdd} folders={folders} />
+          <TextEditor
+            initialContent={getEditorContent()}
+            handleNoteSubmit={handleNoteAdd}
+            folders={folders}
+            handleError={(error) => handleError(error)}
+          />
           <ul>{noteItems}</ul>
           { !isLoading && notes.length === 0 && (
             <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />

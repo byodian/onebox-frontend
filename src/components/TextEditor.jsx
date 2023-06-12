@@ -6,6 +6,7 @@ import {
   FormControl,
   Select,
 } from '@chakra-ui/react';
+import { setEditorContent } from '../utils/auth';
 
 const editorConfig = {
   toolbar: {
@@ -24,7 +25,7 @@ const editorConfig = {
 };
 
 function TextEditor({
-  handleNoteSubmit, initialContent, folders, initialFolderId,
+  handleNoteSubmit, initialContent, folders, initialFolderId, handleError,
 }) {
   const [content, setContent] = useState('');
   const [folderId, setFolderId] = useState(initialFolderId || '');
@@ -40,11 +41,19 @@ function TextEditor({
     const requestBody = folderId
       ? { content, folderId }
       : { content };
-    await handleNoteSubmit(requestBody);
-    setIsLoading(false);
-    setContent('');
-    setFolderId('');
-    setIsDisabled(true);
+
+    try {
+      await handleNoteSubmit(requestBody);
+
+      setIsLoading(false);
+      setContent('');
+      setFolderId('');
+      setIsDisabled(true);
+    } catch (error) {
+      setIsLoading(false);
+      setIsDisabled(false);
+      handleError(error);
+    }
   };
 
   const handleChange = (e) => {
@@ -59,7 +68,10 @@ function TextEditor({
         config={editorConfig}
         data={content}
         onChange={(_event, editor) => {
-          setContent(editor.getData());
+          const text = editor.getData();
+          setContent(text);
+          setEditorContent(text);
+
           if (editor.getData() !== '') {
             setIsDisabled(false);
           } else {
