@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { EyeOpenedIcon, EyeHidedIcon } from './IconStyles';
+import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
 export const ButtonWrap = styled.span`
   position: absolute; 
@@ -16,13 +16,13 @@ export const ButtonWrap = styled.span`
   color: var(--color-gray-06); 
 `;
 
-export const EyeOpenedButton = styled(EyeOpenedIcon)`
+export const EyeOpenedButton = styled(BsEye)`
   width: 20px;
   height: 20px;
   cursor: pointer;
 `;
 
-export const EyeHidedButton = styled(EyeHidedIcon)`
+export const EyeHidedButton = styled(BsEyeSlash)`
   width: 20px;
   height: 20px;
   cursor: pointer;

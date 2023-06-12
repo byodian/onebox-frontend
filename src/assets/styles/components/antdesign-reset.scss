@@ -2,18 +2,19 @@
   padding: 0;
 }
 
-
 .ant-collapse-borderless {
   background-color: transparent;
 }
 
 .ant-collapse-icon-position-end > .ant-collapse-item > .ant-collapse-header {
   padding: 8px 12px;
+  align-items: center;
 }
 
 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
   color: var(--color-gray-05);
 }
+
 .ant-collapse-icon-position-end > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow  {
   right: 45px; 
 }

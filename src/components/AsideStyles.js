@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { NavLink } from 'react-router-dom';
+
 import {
   BsBox,
   BsStar,
@@ -15,7 +15,7 @@ export const Aside = styled.aside`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  min-width: 250px;
+  width: 250px;
   height: 100%;
   overflow-y: hidden;
   padding: 20px;
@@ -26,13 +26,14 @@ export const Aside = styled.aside`
   }
 `;
 
-export const AsideNavLink = styled(NavLink)`
+export const AsideNavLink = styled.div`
   display: flex;
   column-gap: 14px;
   align-items: center;
   width: 100%;
   padding: 8px 12px;
   border-radius: 4px;
+  cursor: pointer;
 
   .edit-button {
     display: none;
@@ -47,6 +48,8 @@ export const AsideNavLink = styled(NavLink)`
   }
  
   &:hover {
+    color: var(--color-blue-03);
+
     .save-notes {
       display: none;
     }

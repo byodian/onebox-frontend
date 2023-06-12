@@ -1,6 +1,4 @@
-import {
-  useState, useRef, useCallback, useEffect,
-} from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   Modal,
@@ -9,7 +7,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  Spinner,
   useDisclosure,
 } from '@chakra-ui/react';
 
@@ -33,12 +30,13 @@ import {
   updateSingleNoteApi,
 } from '../services/note';
 
+import { getAllFolders } from '../services/folder';
+
 export default function NotesPage({ pageType }) {
   const [currentId, setCurrentId] = useState('');
+  const [currentFolderId, setCurrentFolderId] = useState('');
   const [visible, setVisible] = useState(false);
-  // Storing the last intersection y position
-  const pageY = useRef(0);
-  const loadingRef = useRef(null);
+  const [folders, setFolders] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleError = useCustomToast();
@@ -47,53 +45,35 @@ export default function NotesPage({ pageType }) {
   const auth = useAuth();
   const paramsId = params.folderId;
 
-  const [{ notes, isLoading, count }, setNotes, setCurrent] = useFetch({
+  const [{ notes, isLoading }, setNotes] = useFetch({
     pageType,
     paramsId,
   });
 
-  const loadingCSS = {
-    height: '50px',
-    margin: '30px',
-  };
-  const loadingTextCSS = { display: isLoading ? 'block' : 'none' };
-
-  const handleObserve = useCallback((entries) => {
-    const { isIntersecting } = entries[0];
-    const { y } = entries[0].boundingClientRect;
-
-    if (isIntersecting && pageY.current > y) {
-      console.log('y', y);
-      console.log('count', count);
-      console.log('notes', notes.length);
-      if (count > notes.length) setCurrent((prev) => prev + 1);
+  useEffect(() => {
+    async function fetchFolders() {
+      try {
+        const initialFolders = await getAllFolders();
+        setFolders(initialFolders);
+      } catch (err) {
+        handleError(err);
+      }
     }
 
-    pageY.current = y;
-  }, [count, notes.length, setCurrent]);
-
-  useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: '20px',
-      threshold: 1,
-    };
-
-    // https://developer.mozilla.org/zh-CN/docs/Web/API/Intersection_Observer_API
-    // 监听加载元素是否可见，如果可见执行回调函数
-    const observer = new IntersectionObserver(handleObserve, options);
-    if (loadingRef.current) observer.observe(loadingRef.current);
-  }, [handleObserve]);
+    fetchFolders();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;
   }
 
-  function handleModelVisible(id, type) {
+  function handleModelVisible(note, type) {
     onOpen();
 
     if (type === 'update') {
-      setCurrentId(id);
+      setCurrentId(note.id);
+      setCurrentFolderId(note.folderId);
     } else {
       setCurrentId('');
     }
@@ -120,14 +100,14 @@ export default function NotesPage({ pageType }) {
    * @param {String} updateNote.content
    */
   async function handleNoteUpdate(updatedNote) {
+    const folderId = updatedNote.folderId ? updatedNote.folderId : '';
+    onClose();
+    setNotes(
+      notes.map((note) => (note.id === currentId
+        ? { ...note, content: updatedNote.content, folderId }
+        : note)),
+    );
     try {
-      onClose();
-      // 目前只能更新内容
-      setNotes(
-        notes.map((note) => (note.id === currentId
-          ? { ...note, content: updatedNote.content }
-          : note)),
-      );
       await updateSingleNoteApi(currentId, updatedNote);
     } catch (error) {
       handleError(error);
@@ -156,6 +136,23 @@ export default function NotesPage({ pageType }) {
     setVisible(true);
   }
 
+  const handleFolderUpdate = async (folderId) => {
+    const note = notes.find((item) => item.id === currentId);
+    const changedNote = { ...note, folderId };
+
+    const updatedNotes = notes.map((item) => (item.id === currentId
+      ? changedNote
+      : item));
+
+    setNotes(updatedNotes);
+
+    try {
+      await updateSingleNoteApi(currentId, changedNote);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   async function handleNoteDelete(id) {
     try {
       setNotes(notes.filter((n) => n.id !== id));
@@ -169,34 +166,29 @@ export default function NotesPage({ pageType }) {
   const noteItems = notes.map((note) => (
     <NoteItem note={note} key={note.id}>
       <NoteItemIcon
+        folders={folders}
         star={note.star}
         toggleStar={() => handleStarToggle(note.id)}
         deleteNote={() => handleDeleteOverlayOpen(note.id)}
-        toggleVisible={() => handleModelVisible(note.id, 'update')}
+        toggleEditDialog={() => handleModelVisible(note, 'update')}
         goDetail={() => navigate(`/notes/${note.id}`)}
+        toggleFolder={() => setCurrentId(note.id)}
+        updateFolder={handleFolderUpdate}
       />
     </NoteItem>
   ));
 
   return (
     <div className="relative flex h-screen">
-      <AsideBlock />
+      <AsideBlock folders={folders} setFolders={setFolders} />
       <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
           <NotesHeader handleLogout={auth.logout} />
-          <TextEditor handleNoteSubmit={handleNoteAdd} />
-          {isLoading && (
-            <div className="relative h-screen grid place-items-center">
-              <Spinner color="teal.500" />
-            </div>
-          )}
+          <TextEditor handleNoteSubmit={handleNoteAdd} folders={folders} />
           <ul>{noteItems}</ul>
-          {notes.length === 0 && (
+          { !isLoading && notes.length === 0 && (
             <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
           )}
-          <div ref={loadingRef} style={loadingCSS}>
-            <span style={loadingTextCSS}>Loading...</span>
-          </div>
         </div>
       </main>
 
@@ -218,6 +210,8 @@ export default function NotesPage({ pageType }) {
               initialContent={
                 currentId ? notes.find((n) => n.id === currentId)?.content : ''
               }
+              initialFolderId={currentFolderId}
+              folders={folders}
             />
           </ModalBody>
         </ModalContent>

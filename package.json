@@ -8,7 +8,7 @@
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@testing-library/user-event": "^14.2.0",
-    "antd": "^4.23.6",
+    "antd": "^4.24.4",
     "axios": "^0.27.2",
     "ckeditor5-custom-build": "file:ckeditor5",
     "framer-motion": "^6.3.12",
@@ -51,7 +51,7 @@
     ]
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,css,scss}": "eslint --fix"
+    "src/**/*.{js,jsx,ts,tsx}": "eslint --fix"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.2",

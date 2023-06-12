@@ -21,6 +21,12 @@ body {
   box-sizing: border-box;
 }
 
+.loading-area {
+  height: 50px;
+  margin: 30px;
+  text-align: center;
+}
+
 // Reset prismjs `pre` element styles with tailwindcss
 pre[class*="language-"] {
   font-size: 0.875em;

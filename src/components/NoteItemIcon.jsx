@@ -1,38 +1,68 @@
+import { Dropdown } from 'antd';
 import {
-  DeleteIcon,
-  CreateIcon,
-  StarBorderIcon,
-  StarIcon,
-  DetailIcon,
-} from './IconStyles';
+  MdOutlineMode,
+  MdOutlineArticle,
+  MdOutlineFolder,
+  MdOutlineStarBorder,
+} from 'react-icons/md';
+import { BiTrash } from 'react-icons/bi';
+import { StarIcon } from './IconStyles';
+
+function DropdownWrapper({ folders, onClick }) {
+  const items = folders.map((folder) => ({
+    key: folder.id,
+    label: (
+      <div onClick={() => onClick(folder.id)} aria-hidden="true">{folder.name}</div>
+    ),
+  }));
+
+  return (
+    <Dropdown menu={{ items }} placement="left" trigger={['click']} destroyPopupOnHide>
+      <MdOutlineFolder />
+    </Dropdown>
+  );
+}
 
 function NoteItemIcon({
-  star, toggleStar, toggleVisible, deleteNote, goDetail,
+  star,
+  toggleStar,
+  toggleEditDialog,
+  toggleFolder,
+  deleteNote,
+  goDetail,
+  folders,
+  updateFolder,
 }) {
   const IconGroup = [
     {
       id: 2,
-      element: star === 1 ? <StarIcon /> : <StarBorderIcon />,
+      element: star === 1 ? <StarIcon /> : <MdOutlineStarBorder />,
       onClick: toggleStar,
       label: '星标',
     },
     {
       id: 3,
-      element: <CreateIcon />,
-      onClick: toggleVisible,
+      element: <MdOutlineMode />,
+      onClick: toggleEditDialog,
       label: '编辑',
     },
     {
       id: 4,
-      element: <DetailIcon />,
+      element: <MdOutlineArticle />,
       onClick: goDetail,
       label: '查看详情',
     },
     {
       id: 5,
-      element: <DeleteIcon />,
+      element: <BiTrash />,
       onClick: deleteNote,
       label: '删除',
+    },
+    {
+      id: 6,
+      element: <DropdownWrapper folders={folders} onClick={updateFolder} />,
+      onClick: toggleFolder,
+      label: '移动',
     },
   ];
 
