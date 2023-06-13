@@ -6,7 +6,7 @@ import {
   FormControl,
   Select,
 } from '@chakra-ui/react';
-import { setEditorContent } from '../utils/auth';
+import { clearEditorContent, setEditorContent } from '../utils/auth';
 
 const editorConfig = {
   toolbar: {
@@ -49,6 +49,7 @@ function TextEditor({
       setContent('');
       setFolderId('');
       setIsDisabled(true);
+      clearEditorContent();
     } catch (error) {
       setIsLoading(false);
       setIsDisabled(false);

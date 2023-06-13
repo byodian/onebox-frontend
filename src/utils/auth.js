@@ -35,6 +35,10 @@ export function setEditorContent(content) {
   window.localStorage.setItem(EDITOR_CONTENT, content);
 }
 
+export function clearEditorContent() {
+  window.localStorage.removeItem(EDITOR_CONTENT);
+}
+
 export function clearStorage() {
   window.localStorage.clear();
 }
