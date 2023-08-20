@@ -27,3 +27,5 @@ yarn-error.log*
 
 # test
 cypress/videos
+
+.vscode

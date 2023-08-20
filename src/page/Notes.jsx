@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
+import {
+  useState, useEffect, useRef,
+} from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+
 import {
   Modal,
   ModalOverlay,
@@ -9,28 +12,30 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import {
+  getNotesApi,
+  createNoteApi,
+  removeSingleNoteApi,
+  updateSingleNoteApi,
+} from '../services/note';
+import { getSingleFolderApi, getAllFolders } from '../services/folder';
 
 import {
   NotesHeader,
   NoteItem,
   NoteItemIcon,
-  ButtonFloat,
   EmptyPage,
   TextEditor,
   AsideBlock,
   AlertCustomDialog,
 } from '../components';
+
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 
 import { compare } from '../utils';
-import { useAuth, useCustomToast, useFetch } from '../hooks';
-import {
-  createNoteApi,
-  removeSingleNoteApi,
-  updateSingleNoteApi,
-} from '../services/note';
+import { useAuth, useCustomToast } from '../hooks';
 
-import { getAllFolders } from '../services/folder';
 import { getEditorContent } from '../utils/auth';
 
 export default function NotesPage({ pageType }) {
@@ -39,31 +44,80 @@ export default function NotesPage({ pageType }) {
   const [visible, setVisible] = useState(false);
   const [folders, setFolders] = useState([]);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleError = useCustomToast();
-  const navigate = useNavigate();
+  const [notes, setNotes] = useState([]);
+  const [count, setCount] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const params = useParams();
   const auth = useAuth();
   const paramsId = params.folderId;
 
-  const [{ notes, isLoading }, setNotes] = useFetch({
-    pageType,
-    paramsId,
-  });
+  const pageTypeRef = useRef(pageType);
+  const folderRef = useRef(paramsId);
 
-  useEffect(() => {
-    async function fetchFolders() {
-      try {
-        const initialFolders = await getAllFolders();
-        setFolders(initialFolders);
-      } catch (err) {
-        handleError(err);
-      }
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const handleError = useCustomToast();
+  const navigate = useNavigate();
+
+  const pageSize = 15;
+  const fetchNotes = async (pageNum = 0) => {
+    let result;
+    setIsLoading(true);
+    setIsError(false);
+
+    // 跳转页面后，重置数据
+    if (pageTypeRef.current !== pageType || folderRef.current !== paramsId) {
+      setNotes([]);
+      setCount(0);
+      setCurrent(0);
+      pageTypeRef.current = pageType;
+      folderRef.current = paramsId;
     }
 
+    console.log('current', current);
+    try {
+      if (pageType === 'folder') {
+        const folder = await getSingleFolderApi(paramsId);
+        result = folder.notes;
+      } else {
+        result = await getNotesApi(pageType, { pageSize, current: pageNum });
+      }
+
+      const fetchedNotes = pageType === 'folder' ? result : result.data;
+      const total = pageType === 'folder' ? fetchedNotes.length : result.count;
+
+      setNotes((prevNotes) => [...prevNotes, ...fetchedNotes]);
+      setCount(total);
+
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      setIsError(true);
+    }
+  };
+
+  async function fetchFolders() {
+    try {
+      const initialFolders = await getAllFolders();
+      setFolders(initialFolders);
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  useEffect(() => {
     fetchFolders();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    fetchNotes(current);
+
+    return () => {
+      console.log('unmounted');
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current, pageType, paramsId]);
 
   if (!auth.user) {
     return <Navigate to="/login" replace />;
@@ -88,6 +142,7 @@ export default function NotesPage({ pageType }) {
    */
   const handleNoteAdd = async (noteObject) => {
     onClose();
+    // TODO: 应该先调取接口，再更新本地数据
     const createdNote = await createNoteApi(noteObject);
     setNotes(notes.concat(createdNote).sort(compare));
   };
@@ -97,6 +152,7 @@ export default function NotesPage({ pageType }) {
    * @param {String} updateNote.content
    */
   async function handleNoteUpdate(updatedNote) {
+    // TODO: 应该先调取接口，再更新本地数据
     const folderId = updatedNote.folderId ? updatedNote.folderId : '';
     onClose();
     setNotes(
@@ -179,7 +235,7 @@ export default function NotesPage({ pageType }) {
     <div className="relative flex h-screen">
       <AsideBlock folders={folders} setFolders={setFolders} />
       <main className="flex-grow h-screen overflow-y-auto">
-        <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto">
+        <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto h-full flex flex-col">
           <NotesHeader handleLogout={auth.logout} />
           <TextEditor
             initialContent={getEditorContent()}
@@ -187,7 +243,29 @@ export default function NotesPage({ pageType }) {
             folders={folders}
             handleError={(error) => handleError(error)}
           />
-          <ul>{noteItems}</ul>
+
+          <div
+            className="overflow-y-auto flex-grow"
+            id="scrollableDiv"
+          >
+            <InfiniteScroll
+              dataLength={notes.length}
+              next={() => {
+                setCurrent((prev) => prev + 1);
+              }}
+              hasMore={notes.length < count}
+              loader={<p className="text-center py-4">Loading...</p>}
+              endMessage={(
+                <p className="text-center py-4">
+                  <b>Yay! You have seen it all</b>
+                </p>
+            )}
+              scrollableTarget="scrollableDiv"
+            >
+              <ul>{noteItems}</ul>
+            </InfiniteScroll>
+          </div>
+
           { !isLoading && notes.length === 0 && (
             <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
           )}
@@ -201,7 +279,7 @@ export default function NotesPage({ pageType }) {
         message={{ headerText: '删除笔记', bodyText: '确定删除这条笔记吗？' }}
       />
 
-      <Modal onClose={onClose} isOpen={isOpen} size="4xl">
+      <Modal onClose={onClose} isOpen={isOpen} size="4xl" closeOnOverlayClick={false}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{currentId ? '编辑笔记' : '新增笔记'}</ModalHeader>
@@ -218,7 +296,7 @@ export default function NotesPage({ pageType }) {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <ButtonFloat handleClick={() => handleModelVisible(null, 'create')} />
+      {/* <ButtonFloat handleClick={() => handleModelVisible(null, 'create')} /> */}
     </div>
   );
 }

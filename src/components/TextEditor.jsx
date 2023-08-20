@@ -27,14 +27,10 @@ const editorConfig = {
 function TextEditor({
   handleNoteSubmit, initialContent, folders, initialFolderId, handleError,
 }) {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState(initialContent || '');
   const [folderId, setFolderId] = useState(initialFolderId || '');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setContent(initialContent || '');
-  }, [initialContent]);
 
   const handleNoteSave = async () => {
     setIsLoading(true);
@@ -44,7 +40,6 @@ function TextEditor({
 
     try {
       await handleNoteSubmit(requestBody);
-
       setIsLoading(false);
       setContent('');
       setFolderId('');
