@@ -75,17 +75,14 @@ export default function NotesPage({ pageType }) {
       folderRef.current = paramsId;
     }
 
-    console.log('current', current);
     try {
-      if (pageType === 'folder') {
-        const folder = await getSingleFolderApi(paramsId);
-        result = folder.notes;
-      } else {
-        result = await getNotesApi(pageType, { pageSize, current: pageNum });
-      }
+      result = await getNotesApi(pageType, {
+        pageSize,
+        current: pageNum,
+        ...(paramsId && { folderId: paramsId }),
+      });
 
-      const fetchedNotes = pageType === 'folder' ? result : result.data;
-      const total = pageType === 'folder' ? fetchedNotes.length : result.count;
+      const { data: fetchedNotes, count: total } = result;
 
       setNotes((prevNotes) => [...prevNotes, ...fetchedNotes]);
       setCount(total);
