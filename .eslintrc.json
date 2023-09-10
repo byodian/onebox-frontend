@@ -22,6 +22,7 @@
     "react", "jest", "cypress"
   ],
   "rules": {
+    "react/button-has-type": "off",
     "linebreak-style": [
       "error",
       "unix"
