@@ -19,7 +19,7 @@ import {
   removeSingleNoteApi,
   updateSingleNoteApi,
 } from '../services/note';
-import { getSingleFolderApi, getAllFolders } from '../services/folder';
+import { getAllFolders } from '../services/folder';
 
 import {
   NotesHeader,
