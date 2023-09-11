@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import { Input, Label } from './InputStyles';
-import { useAuth } from '../hooks';
+import { useAuth } from '../../hooks';
 
 import {
   ButtonWrap,
@@ -9,12 +9,12 @@ import {
   EyeOpenedButton,
 } from './InputPasswordStyles';
 
-function AccountLoginForm() {
+function AccountRegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassWord] = useState('');
-  const [visible, setVisible] = useState(false);
+  const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const auth = useAuth();
+  const [visible, setVisible] = useState(false);
 
   const passwordType = visible ? 'text' : 'password';
 
@@ -22,10 +22,13 @@ function AccountLoginForm() {
     setVisible(!visible);
   };
 
+  const auth = useAuth();
+
   const handleSubmit = async () => {
     setIsLoading(true);
-    await auth.login({
+    await auth.register({
       email,
+      username,
       password,
     });
     setIsLoading(false);
@@ -43,6 +46,18 @@ function AccountLoginForm() {
           required
           reset="email"
           placeholder="请输入邮箱地址"
+        />
+      </div>
+      <div className="mb-4">
+        <Label htmlFor="username">用户名</Label>
+        <Input
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          type="text"
+          id="username"
+          name="username"
+          required
+          placeholder="请输入用户名"
         />
       </div>
       <div className="mb-4">
@@ -72,11 +87,11 @@ function AccountLoginForm() {
           onClick={handleSubmit}
           className="w-full"
         >
-          登陆
+          注册
         </Button>
       </div>
     </form>
   );
 }
 
-export default AccountLoginForm;
+export default AccountRegisterForm;

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import parse from 'html-react-parser';
 import Prism from 'prismjs';
-import { getLocalDate } from '../utils';
+import { formatDateTime } from '../../utils/format';
 import 'prismjs/themes/prism-tomorrow.css';
 import './NoteItemStyle.scss';
 
@@ -15,7 +15,7 @@ function Note({ note, children }) {
       className="note-item"
     >
       <div className="flex items-center mb-4">
-        <time className="block text-gray-400">{getLocalDate(note.createdAt)}</time>
+        <time className="block text-gray-400">{formatDateTime(new Date(note.createdAt))}</time>
         <div className="note-item__buttons">
           {children}
         </div>

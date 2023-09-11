@@ -10,7 +10,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 
-export default function AlertCustomDialog({
+export default function AlertDialogCustom({
   handleClose,
   handleConfirm,
   isOpen,

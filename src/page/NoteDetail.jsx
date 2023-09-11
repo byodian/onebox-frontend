@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react';
-import { getLocalDate } from '../utils';
-import { getSingleNoteApi } from '../services/note';
+import { formatDateTime } from '../utils/format';
+import { getSingleNoteApi } from '../api/note';
 
 function Note() {
   const params = useParams();
@@ -33,7 +33,7 @@ function Note() {
         <div className="prose">
           <p>
             <time className="block text-gray-400">
-              {getLocalDate(note.createdAt)}
+              {formatDateTime(new Date(note.createdAt))}
             </time>
           </p>
           {parse(note.content)}

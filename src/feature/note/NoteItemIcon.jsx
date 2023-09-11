@@ -6,7 +6,7 @@ import {
   MdOutlineStarBorder,
 } from 'react-icons/md';
 import { BiTrash } from 'react-icons/bi';
-import { StarIcon } from './IconStyles';
+import { StarIcon } from '../../components/button';
 
 function DropdownWrapper({ folders, onClick }) {
   const items = folders.map((folder) => ({

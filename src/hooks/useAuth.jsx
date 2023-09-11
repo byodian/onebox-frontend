@@ -1,7 +1,7 @@
 import { useState, useContext, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
-import { loginApi, createUserApi } from '../services/user';
+import { loginApi, createUserApi } from '../api/user';
 import {
   getStorageUser,
   getStorageLogIn,

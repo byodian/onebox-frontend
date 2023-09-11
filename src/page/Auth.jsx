@@ -1,6 +1,5 @@
-import Logo from '../components/Logo';
-import AccountLoginForm from '../components/AccountLoginForm';
-import AccountRegisterForm from '../components/AccountRegisterForm';
+import { Logo } from '../components/logo';
+import { AccountLoginForm, AccountRegisterForm } from '../feature/account';
 
 import {
   Container,

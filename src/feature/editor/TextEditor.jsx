@@ -10,7 +10,7 @@ import {
   FormControl,
   Select,
 } from '@chakra-ui/react';
-import { clearEditorContent, setEditorContent } from '../utils/auth';
+import { clearEditorContent, setEditorContent } from '../../utils/auth';
 
 function TextEditor({
   handleNoteSubmit, initialContent, folders, initialFolderId, handleError,

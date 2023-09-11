@@ -48,6 +48,7 @@
     "react/prop-types": 0,
     "no-unused-vars": "warn",
     "require-await": "error",
+    "import/prefer-default-export": "off",
     "react/jsx-filename-extension": [1, { "extensions": ["js", "jsx"] }],
     "react-hooks/exhaustive-deps": "warn",
     "react/react-in-jsx-scope": "off"

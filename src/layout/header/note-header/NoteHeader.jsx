@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MenuButton, MenuText, HamburgerButton } from './ButtonStyles';
+import { MenuButton, MenuText, HamburgerButton } from '../../../components/button';
 import {
   Header,
   Nav,
@@ -8,7 +8,7 @@ import {
   MenuContainer,
 } from './NoteHeaderStyles';
 import { Hamburger } from './IconStyles';
-import Author from '../assets/author.png';
+import Author from '../../../assets/author.png';
 
 function DropDown({ handleLogout }) {
   return (
@@ -37,7 +37,7 @@ function NotesHeader({ handleLogout }) {
         <ImgButton onClick={() => setVisibility(!visibility)}>
           <Img src={Author} alt="用户头像" />
         </ImgButton>
-        { visibility ? <DropDown handleLogout={handleLogout} /> : null }
+        {visibility ? <DropDown handleLogout={handleLogout} /> : null}
       </Nav>
     </Header>
   );

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { clearStorage, getStorageToken } from './auth';
+import { clearStorage, getStorageToken } from '../auth';
 
 axios.defaults.headers['Content-Type'] = 'application/json';
 

@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
-import AlertCustomDialog from './AlertCustomDialog';
+import { AlertDialogCustom } from '../../components/alert-dialog';
 
 import {
   Aside,
@@ -27,12 +27,12 @@ import {
   BsPencilSquareIcon,
 } from './AsideStyles';
 
-import { useCustomToast, useField } from '../hooks';
+import { useCustomToast, useField } from '../../hooks';
 import {
   createFolderApi,
   removeSingleFolderApi,
   updateSingleFolderApi,
-} from '../services/folder';
+} from '../../api/folder';
 
 const { Panel } = Collapse;
 const asideLinks = [
@@ -193,7 +193,7 @@ export default function AsideBlock({ folders, setFolders }) {
         </Collapse>
       </div>
 
-      <AlertCustomDialog
+      <AlertDialogCustom
         isOpen={dialogVisibility}
         handleConfirm={handleDelete}
         handleClose={() => setDialogVisibility(false)}

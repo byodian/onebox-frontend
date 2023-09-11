@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
-import Header from '../components/HomeHeader';
-import Footer from '../components/Footer';
-import { Button } from '../components/ButtonStyles';
+import { HomeHeader } from '../layout/header/home-header';
+import { Footer } from '../layout/footer';
+import { Button } from '../components/button';
 
 import Hero from '../assets/svg/hero.svg';
 import Feature1 from '../assets/svg/feature_1.svg';
@@ -27,7 +27,7 @@ function Home() {
 
   return (
     <>
-      <Header isAuth={auth?.isAuth} />
+      <HomeHeader isAuth={auth?.isAuth} />
       <main>
         <Container>
           <HeroSection>

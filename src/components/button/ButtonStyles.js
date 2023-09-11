@@ -1,6 +1,12 @@
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
+import {
+  MdMenu,
+  MdOutlineStar,
+  MdAdd,
+} from 'react-icons/md';
+
 export const Button = styled.button`
   display: inline-block;
   padding: 0.6rem 1rem;
@@ -47,4 +53,18 @@ export const MenuButton = styled.button`
 
 export const MenuText = styled.span`
   margin-left: var(--space-8);
+`;
+
+export const Hamburger = styled(MdMenu)`
+  width: 24px;
+  height: 24px;
+`;
+
+export const PlusIcon = styled(MdAdd)`
+  width: 24px;
+  height: 24px;
+`;
+
+export const StarIcon = styled(MdOutlineStar)`
+  color: var(--highlight);
 `;

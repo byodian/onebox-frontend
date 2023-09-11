@@ -2,8 +2,8 @@ import {
   useState, useEffect, useCallback, useRef,
 } from 'react';
 
-import { getNotesApi } from '../services/note';
-import { getSingleFolderApi } from '../services/folder';
+import { getNotesApi } from '../api/note';
+import { getSingleFolderApi } from '../api/folder';
 
 export default function useFetch({ pageType, paramsId, pageSize }) {
   const [notes, setNotes] = useState([]);

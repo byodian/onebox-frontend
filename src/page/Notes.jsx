@@ -18,25 +18,21 @@ import {
   createNoteApi,
   removeSingleNoteApi,
   updateSingleNoteApi,
-} from '../services/note';
-import { getAllFolders } from '../services/folder';
+} from '../api/note';
+import { getAllFolders } from '../api/folder';
 
-import {
-  NotesHeader,
-  NoteItem,
-  NoteItemIcon,
-  EmptyPage,
-  TextEditor,
-  AsideBlock,
-  AlertCustomDialog,
-} from '../components';
+import { EmptyPage } from '../components/empty-page';
+import { AlertDialogCustom } from '../components/alert-dialog';
+import { NoteItem, NoteItemIcon } from '../feature/note';
+import { TextEditor } from '../feature/editor';
+import { NoteHeader } from '../layout/header/note-header';
+import { AsideBlock } from '../layout/aside';
 
 import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
 
-import { compare } from '../utils';
-import { useAuth, useCustomToast } from '../hooks';
-
+import { compare } from '../utils/common';
 import { getEditorContent } from '../utils/auth';
+import { useAuth, useCustomToast } from '../hooks';
 
 export default function NotesPage({ pageType }) {
   const [currentId, setCurrentId] = useState('');
@@ -113,7 +109,7 @@ export default function NotesPage({ pageType }) {
     return () => {
       console.log('unmounted');
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current, pageType, paramsId]);
 
   if (!auth.user) {
@@ -233,7 +229,7 @@ export default function NotesPage({ pageType }) {
       <AsideBlock folders={folders} setFolders={setFolders} />
       <main className="flex-grow h-screen overflow-y-auto">
         <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto h-full flex flex-col">
-          <NotesHeader handleLogout={auth.logout} />
+          <NoteHeader handleLogout={auth.logout} />
           <TextEditor
             initialContent={getEditorContent()}
             handleNoteSubmit={handleNoteAdd}
@@ -256,20 +252,20 @@ export default function NotesPage({ pageType }) {
                 <p className="text-center py-4">
                   <b>Yay! You have seen it all</b>
                 </p>
-            )}
+              )}
               scrollableTarget="scrollableDiv"
             >
               <ul>{noteItems}</ul>
             </InfiniteScroll>
           </div>
 
-          { !isLoading && notes.length === 0 && (
+          {!isLoading && notes.length === 0 && (
             <EmptyPage icon={<DefaultHomeSvg />} text="写点什么吧？" />
           )}
         </div>
       </main>
 
-      <AlertCustomDialog
+      <AlertDialogCustom
         handleConfirm={() => handleNoteDelete(currentId)}
         handleClose={() => setVisible(false)}
         isOpen={visible}

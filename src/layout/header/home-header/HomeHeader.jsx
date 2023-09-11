@@ -1,4 +1,4 @@
-import Logo from './Logo';
+import { Logo } from '../../../components/logo';
 import {
   Header,
   Nav,
