@@ -27,6 +27,16 @@ body {
   text-align: center;
 }
 
+mark {
+    background-color: #faf594;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    padding-left: .25rem;
+    padding-right: .25rem;
+    border-radius: .375rem;
+    font-size: .9rem
+}
+
 // Reset prismjs `pre` element styles with tailwindcss
 pre[class*="language-"] {
   font-size: 0.875em;

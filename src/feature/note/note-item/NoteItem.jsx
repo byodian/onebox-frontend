@@ -86,7 +86,7 @@ function NoteItem({
             ))}
           </div>
         </div>
-        <div className="prose prose-base max-w-full">{parse(note.content)}</div>
+        <div className="prose max-w-full">{parse(note.content)}</div>
       </li>
 
       <AlertDialogCustom
