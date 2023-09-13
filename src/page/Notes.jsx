@@ -1,18 +1,15 @@
 import {
   useState, useEffect, useRef,
 } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
-
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Navigate, useParams } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { NoteList } from 'feature/note/note-list';
+import { EmptyPage } from '../components/empty-page';
+import { TextEditor } from '../feature/editor';
+import { NoteHeader } from '../layout/header/note-header';
+import { AsideBlock } from '../layout/aside';
+import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
+
 import {
   getNotesApi,
   createNoteApi,
@@ -20,31 +17,17 @@ import {
   updateSingleNoteApi,
 } from '../api/note';
 import { getAllFolders } from '../api/folder';
-
-import { EmptyPage } from '../components/empty-page';
-import { AlertDialogCustom } from '../components/alert-dialog';
-import { NoteItem, NoteItemIcon } from '../feature/note';
-import { TextEditor } from '../feature/editor';
-import { NoteHeader } from '../layout/header/note-header';
-import { AsideBlock } from '../layout/aside';
-
-import { ReactComponent as DefaultHomeSvg } from '../assets/svg/defaultHome.svg';
-
 import { compare } from '../utils/common';
 import { getEditorContent } from '../utils/auth';
+
 import { useAuth, useCustomToast } from '../hooks';
 
 export default function NotesPage({ pageType }) {
-  const [currentId, setCurrentId] = useState('');
-  const [currentFolderId, setCurrentFolderId] = useState('');
-  const [visible, setVisible] = useState(false);
   const [folders, setFolders] = useState([]);
-
   const [notes, setNotes] = useState([]);
   const [count, setCount] = useState(0);
   const [current, setCurrent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
   const params = useParams();
   const auth = useAuth();
   const paramsId = params.folderId;
@@ -52,15 +35,12 @@ export default function NotesPage({ pageType }) {
   const pageTypeRef = useRef(pageType);
   const folderRef = useRef(paramsId);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const handleError = useCustomToast();
-  const navigate = useNavigate();
 
   const pageSize = 15;
   const fetchNotes = async (pageNum = 0) => {
     let result;
     setIsLoading(true);
-    setIsError(false);
 
     // 跳转页面后，重置数据
     if (pageTypeRef.current !== pageType || folderRef.current !== paramsId) {
@@ -86,7 +66,6 @@ export default function NotesPage({ pageType }) {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      setIsError(true);
     }
   };
 
@@ -116,38 +95,13 @@ export default function NotesPage({ pageType }) {
     return <Navigate to="/login" replace />;
   }
 
-  function handleModelVisible(note, type) {
-    onOpen();
-
-    if (type === 'update') {
-      setCurrentId(note.id);
-      setCurrentFolderId(note.folderId);
-    } else {
-      setCurrentId('');
-    }
-  }
-
-  /**
-   * 目前只能新增笔记内容
-   * @param {Object} noteObject
-   * @param {String} noteObject.content - 笔记内容
-   * @returns
-   */
   const handleNoteAdd = async (noteObject) => {
-    onClose();
-    // TODO: 应该先调取接口，再更新本地数据
     const createdNote = await createNoteApi(noteObject);
     setNotes(notes.concat(createdNote).sort(compare));
   };
 
-  /**
-   * @param {Object} updatedNote
-   * @param {String} updateNote.content
-   */
-  async function handleNoteUpdate(updatedNote) {
-    // TODO: 应该先调取接口，再更新本地数据
+  const handleNoteUpdate = async (currentId, updatedNote) => {
     const folderId = updatedNote.folderId ? updatedNote.folderId : '';
-    onClose();
     setNotes(
       notes.map((note) => (note.id === currentId
         ? { ...note, content: updatedNote.content, folderId }
@@ -158,9 +112,9 @@ export default function NotesPage({ pageType }) {
     } catch (error) {
       handleError(error);
     }
-  }
+  };
 
-  async function handleStarToggle(id) {
+  const handleStarToggle = async (id) => {
     const note = notes.find((item) => item.id === id);
     const changedNote = { ...note, star: note.star ? 0 : 1 };
 
@@ -175,60 +129,39 @@ export default function NotesPage({ pageType }) {
     } catch (error) {
       handleError(error);
     }
-  }
+  };
 
-  function handleDeleteOverlayOpen(id) {
-    setCurrentId(id);
-    setVisible(true);
-  }
-
-  const handleFolderUpdate = async (folderId) => {
-    const note = notes.find((item) => item.id === currentId);
+  const handleFolderUpdate = async (folderId, currentNoteId) => {
+    const note = notes.find((item) => item.id === currentNoteId);
     const changedNote = { ...note, folderId };
 
-    const updatedNotes = notes.map((item) => (item.id === currentId
-      ? changedNote
-      : item));
+    const updatedNotes = notes.map((item) => (
+      item.id === currentNoteId ? changedNote : item
+    ));
 
     setNotes(updatedNotes);
 
     try {
-      await updateSingleNoteApi(currentId, changedNote);
+      await updateSingleNoteApi(currentNoteId, changedNote);
     } catch (error) {
       handleError(error);
     }
   };
 
-  async function handleNoteDelete(id) {
+  const handleNoteDelete = async (id) => {
     try {
       setNotes(notes.filter((n) => n.id !== id));
-      setVisible(false);
       await removeSingleNoteApi(id);
     } catch (error) {
       handleError(error);
     }
-  }
-
-  const noteItems = notes.map((note) => (
-    <NoteItem note={note} key={note.id}>
-      <NoteItemIcon
-        folders={folders}
-        star={note.star}
-        toggleStar={() => handleStarToggle(note.id)}
-        deleteNote={() => handleDeleteOverlayOpen(note.id)}
-        toggleEditDialog={() => handleModelVisible(note, 'update')}
-        goDetail={() => navigate(`/notes/${note.id}`)}
-        toggleFolder={() => setCurrentId(note.id)}
-        updateFolder={handleFolderUpdate}
-      />
-    </NoteItem>
-  ));
+  };
 
   return (
-    <div className="relative flex h-screen">
+    <div className="relative flex h-screen md:w-4/5 lg:w-[900px] mx-auto">
       <AsideBlock folders={folders} setFolders={setFolders} />
       <main className="flex-grow h-screen overflow-y-auto">
-        <div className="px-6 md:w-4/5 lg:w-2/3 mx-auto h-full flex flex-col">
+        <div className="px-6 h-full flex flex-col">
           <NoteHeader handleLogout={auth.logout} />
           <TextEditor
             initialContent={getEditorContent()}
@@ -255,7 +188,14 @@ export default function NotesPage({ pageType }) {
               )}
               scrollableTarget="scrollableDiv"
             >
-              <ul>{noteItems}</ul>
+              <NoteList
+                notes={notes}
+                folders={folders}
+                handleNoteUpdate={handleNoteUpdate}
+                handleNoteDelete={handleNoteDelete}
+                handleStarToggle={handleStarToggle}
+                handleFolderUpdate={handleFolderUpdate}
+              />
             </InfiniteScroll>
           </div>
 
@@ -264,32 +204,6 @@ export default function NotesPage({ pageType }) {
           )}
         </div>
       </main>
-
-      <AlertDialogCustom
-        handleConfirm={() => handleNoteDelete(currentId)}
-        handleClose={() => setVisible(false)}
-        isOpen={visible}
-        message={{ headerText: '删除笔记', bodyText: '确定删除这条笔记吗？' }}
-      />
-
-      <Modal onClose={onClose} isOpen={isOpen} size="4xl" closeOnOverlayClick={false}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{currentId ? '编辑笔记' : '新增笔记'}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <TextEditor
-              handleNoteSubmit={currentId ? handleNoteUpdate : handleNoteAdd}
-              initialContent={
-                currentId ? notes.find((n) => n.id === currentId)?.content : ''
-              }
-              initialFolderId={currentFolderId}
-              folders={folders}
-            />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-      {/* <ButtonFloat handleClick={() => handleModelVisible(null, 'create')} /> */}
     </div>
   );
 }
