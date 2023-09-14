@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Dropdown } from 'antd';
 import {
   MdOutlineMode,
@@ -38,52 +38,31 @@ function NoteItem({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
-  const BUTTON_LIST = [
-    {
-      id: 2,
-      element: note.star === 1 ? <StarIcon /> : <MdOutlineStarBorder />,
-      onClick: () => handleStarToggle(note.id),
-      label: '星标',
-    },
-    {
-      id: 3,
-      element: <MdOutlineMode />,
-      onClick: onOpen,
-      label: '编辑',
-    },
-    {
-      id: 4,
-      element: <MdOutlineArticle />,
-      onClick: () => navigate(`/notes/${note.id}`),
-      label: '查看详情',
-    },
-    {
-      id: 5,
-      element: <BiTrash />,
-      onClick: () => setVisible(true),
-      label: '删除',
-    },
-    {
-      id: 6,
-      element: (<DropdownWrapper
-        folders={folders}
-        note={note}
-        onClick={(folderId) => handleFolderUpdate(folderId, note.id)}
-      />),
-      onClick: null,
-      label: '移动',
-    },
-  ];
-
   return (
     <>
       <li className="note-item">
         <div className="flex items-center mb-4">
           <time className="block text-gray-400">{formatDateTime(new Date(note.createdAt))}</time>
           <div className="note-item__buttons flex ml-auto items-center gap-x-2">
-            {BUTTON_LIST.map((button) => (
-              <NoteItemButton button={button} key={button.id} />
-            ))}
+            <NoteItemButton label="星标" onClick={() => handleStarToggle(note.id)}>
+              {note.star === 1 ? <StarIcon /> : <MdOutlineStarBorder />}
+            </NoteItemButton>
+            <NoteItemButton label="编辑" onClick={onOpen}>
+              <MdOutlineMode />
+            </NoteItemButton>
+            <NoteItemButton label="查看详情" onClick={() => navigate(`/notes/${note.id}`)}>
+              <MdOutlineArticle />
+            </NoteItemButton>
+            <NoteItemButton label="删除" onClick={() => setVisible(true)}>
+              <BiTrash />
+            </NoteItemButton>
+            <NoteItemButton label="移动" onClick={null}>
+              <DropdownWrapper
+                folders={folders}
+                note={note}
+                onClick={(folderId) => handleFolderUpdate(folderId, note.id)}
+              />
+            </NoteItemButton>
           </div>
         </div>
         <div className="prose max-w-full">{parse(note.content)}</div>
@@ -103,7 +82,10 @@ function NoteItem({
           <ModalCloseButton />
           <ModalBody>
             <TextEditor
-              handleNoteSubmit={(updatedNote) => handleNoteUpdate(note.id, updatedNote)}
+              onSubmit={(updatedNote) => {
+                handleNoteUpdate(note.id, updatedNote);
+                onClose();
+              }}
               initialContent={note.content}
               initialFolderId={note.id}
               folders={folders}

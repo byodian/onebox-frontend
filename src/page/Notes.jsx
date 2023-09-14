@@ -165,7 +165,7 @@ export default function NotesPage({ pageType }) {
           <NoteHeader handleLogout={auth.logout} />
           <TextEditor
             initialContent={getEditorContent()}
-            handleNoteSubmit={handleNoteAdd}
+            onSubmit={handleNoteAdd}
             folders={folders}
             handleError={(error) => handleError(error)}
           />

@@ -16,7 +16,7 @@ import {
 import { clearEditorContent, setEditorContent } from 'utils/auth';
 
 function TextEditor({
-  handleNoteSubmit, initialContent, folders, initialFolderId, handleError,
+  onSubmit, initialContent, folders, initialFolderId, handleError,
 }) {
   const editor = useEditor({
     extensions: [
@@ -44,7 +44,7 @@ function TextEditor({
       : { content };
 
     try {
-      await handleNoteSubmit(requestBody);
+      await onSubmit(requestBody);
       setIsLoading(false);
       setFolderId('');
       clearEditorContent();
