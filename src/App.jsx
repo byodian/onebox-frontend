@@ -7,6 +7,7 @@ import Notes from './page/Notes';
 import { ProvideAuth } from './hooks/useAuth';
 
 import './assets/styles/index.scss';
+import './App.scss';
 
 function App() {
   return (

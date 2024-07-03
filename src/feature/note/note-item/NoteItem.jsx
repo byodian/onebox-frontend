@@ -40,7 +40,7 @@ function NoteItem({
 
   return (
     <>
-      <li className="note-item">
+      <li className="note-item p-4 rounded-md bg-white">
         <div className="flex items-center mb-4">
           <time className="block text-gray-400">{formatDateTime(new Date(note.createdAt))}</time>
           <div className="note-item__buttons flex ml-auto items-center gap-x-2">

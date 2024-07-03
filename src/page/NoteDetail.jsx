@@ -26,11 +26,11 @@ function Note() {
   }, [params.id]);
 
   return (
-    <main>
+    <main className="bg-white">
       {isLoading ? (
         <Spinner color="teal.500" />
       ) : (
-        <div className="prose">
+        <div className="prose mx-auto pt-6 md:w-4/5">
           <p>
             <time className="block text-gray-400">
               {formatDateTime(new Date(note.createdAt))}

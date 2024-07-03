@@ -18,8 +18,7 @@ export const Aside = styled.aside`
   width: 250px;
   height: 100%;
   overflow-y: hidden;
-  padding: 20px;
-  border-right: 1px solid var(--color-gray-04);
+  padding: 1rem;
 
   @media only screen and (max-width: 640px) {
     display: none;
@@ -34,6 +33,7 @@ export const AsideNavLink = styled.div`
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 1rem;
 
   .edit-button {
     display: none;
@@ -60,7 +60,7 @@ export const AsideNavLink = styled.div`
   }
 
   &.active {
-    background-color: var(--color-gray-01);
+    background-color: var(--color-gray-02);
     color: var(--highlight);
   }
 `;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Collapse } from 'antd';
+
 import {
   IconButton,
   InputGroup,
@@ -9,6 +10,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Tooltip,
 } from '@chakra-ui/react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -115,7 +117,10 @@ export default function AsideBlock({ folders, setFolders }) {
       className={location.pathname === `/folders/${folder.id}` ? 'active' : ''}
     >
       <FolderIcon />
-      <span>{folder.name}</span>
+      <Tooltip label={folder.name} hasArrow>
+        <div className="truncate">{folder.name}</div>
+      </Tooltip>
+
       <span className="ml-auto text-gray-400 save-notes">
         {folder.notes ? folder.notes : ''}
       </span>

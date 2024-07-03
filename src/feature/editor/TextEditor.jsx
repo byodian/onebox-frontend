@@ -68,11 +68,11 @@ function TextEditor({
   }, [editor]);
 
   return (
-    <div className="py-6">
+    <div className="pr-4">
       <div
         className="
           border-2 border-black rounded max-h-64
-          overflow-auto"
+          overflow-auto bg-white"
       >
         <div className="pl-[1em] flex items-center">
           <button onClick={addImage} className="w-8 h-8">
@@ -83,7 +83,7 @@ function TextEditor({
         </div>
         <EditorContent editor={editor} />
       </div>
-      <div className="flex mt-6">
+      <div className="flex my-6">
         <FormControl className="mr-10">
           <Select placeholder="选择分类" value={folderId} onChange={handleChange}>
             {folders.map((folder) => (

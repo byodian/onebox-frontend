@@ -9,7 +9,7 @@ export function NoteList({
   handleNoteDelete,
 }) {
   return (
-    <ul>
+    <ul className="flex flex-col gap-4">
       {notes.map((note) => (
         <NoteItem
           key={note.id}

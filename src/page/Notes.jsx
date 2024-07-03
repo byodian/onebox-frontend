@@ -161,7 +161,7 @@ export default function NotesPage({ pageType }) {
     <div className="relative flex h-screen md:w-4/5 lg:w-[900px] mx-auto">
       <AsideBlock folders={folders} setFolders={setFolders} />
       <main className="flex-grow h-screen overflow-y-auto">
-        <div className="px-6 h-full flex flex-col">
+        <div className="pl-6 h-full flex flex-col">
           <NoteHeader handleLogout={auth.logout} />
           <TextEditor
             initialContent={getEditorContent()}
