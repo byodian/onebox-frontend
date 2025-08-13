@@ -1,16 +1,25 @@
-FROM node:16
+# Build stage
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN --mount=type=cache,id=npm,target=/root/.npm \
+    npm ci
+COPY . .
+RUN npm run build
 
-# Create app directory
+# Production stage
+FROM node:20-alpine AS final
 WORKDIR /app
 
-# Install app dependencies
-COPY package*.json ./
+# Install only serve in production
+RUN --mount=type=cache,id=npm,target=/root/.npm \
+    npm install -g serve
 
-RUN npm install
+# Copy build output
+COPY --from=build /app/build ./build
 
-# Bundle app source
-COPY . .
-
+# Expose CRA default port
 EXPOSE 3001
 
-CMD ["npm", "start"]
+# Start server
+CMD ["serve", "-s", "build"]
